@@ -1,8 +1,11 @@
 """Thin Gemini wrapper: structured JSON output, retries, a fallback model, and call counting."""
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import time
+from pathlib import Path
 from typing import Callable
 
 from google import genai
@@ -29,6 +32,17 @@ class LLM:
         self.thinking_budget = cfg.gemini_thinking_budget
         self.log = log or (lambda kind, data: None)
         self.calls = 0
+        self.cache_dir = cfg.state_dir / "llm_cache" if cfg.llm_cache else None
+
+    def _cache_path(self, prompt: str, schema: dict) -> Path | None:
+        """Dev-only response cache (LLM_CACHE=1): re-running a scripted scenario costs no quota.
+        The clock line is masked so the same conversation hits the cache on a later run."""
+        if not self.cache_dir:
+            return None
+        stable = re.sub(r"today: [^\n|]*", "today: <masked>", prompt)
+        key = hashlib.sha256(json.dumps([self.models[0], self.system_prompt, stable, schema],
+                                        sort_keys=True).encode()).hexdigest()[:24]
+        return self.cache_dir / f"{key}.json"
 
     def _config(self, schema: dict) -> types.GenerateContentConfig:
         return types.GenerateContentConfig(
@@ -40,6 +54,18 @@ class LLM:
         )
 
     def json_call(self, prompt: str, schema: dict, purpose: str) -> dict:
+        cache = self._cache_path(prompt, schema)
+        if cache and cache.exists():
+            data = json.loads(cache.read_text(encoding="utf-8"))
+            self.log("llm_call", {"purpose": purpose, "model": "cache", "prompt": prompt, "response": data})
+            return data
+        data = self._call(prompt, schema, purpose)
+        if cache:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        return data
+
+    def _call(self, prompt: str, schema: dict, purpose: str) -> dict:
         last_err = None
         for model in self.models:
             for attempt in range(2):

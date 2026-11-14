@@ -11,7 +11,8 @@ from agent.conversation.session import Session
 
 
 def compute_status(s: Session) -> str:
-    if s.identity == "denied" or s.escalations or s.conflicts or s.write_errors:
+    # gave_up: the candidate kept giving answers the rules reject; a person should sort it out.
+    if s.identity == "denied" or s.escalations or s.conflicts or s.write_errors or s.gave_up:
         return "needs_human"
     if diagnose(s.record).complete:
         return "completed"
@@ -33,6 +34,8 @@ def build_notes(s: Session, status: str, previous_notes: str | None) -> str:
         parts.append("Collected: " + ", ".join(f"{k}={v}" for k, v in s.saved.items()) + ".")
     if s.refused:
         parts.append("Refused: " + "; ".join(f"{k} (\"{v}\")" for k, v in s.refused.items()) + ".")
+    for k, why in s.gave_up.items():
+        parts.append(f"Gave up on {k}: {why}.")
     remaining = [f for f in s.remaining]
     if remaining and status != "completed":
         parts.append("Still needed: " + ", ".join(remaining) + ".")
@@ -59,6 +62,7 @@ def build_notes(s: Session, status: str, previous_notes: str | None) -> str:
     state = {
         "remaining": remaining,
         "refused": list(s.refused),
+        "unresolved": list(s.gave_up),
         "callback": (s.followup or {}).get("iso"),
         "status": status,
     }

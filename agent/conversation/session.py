@@ -28,6 +28,11 @@ class Session:
     llm_failed: bool = False
     end_reason: str = ""
     started_at: str = field(default_factory=lambda: now_ist().isoformat())
+    gave_up: dict = field(default_factory=dict)   # field -> why we stopped asking (attempt cap)
+    soft_warned: set = field(default_factory=set)  # cross-field rules already raised once
+    save_events: int = 0                       # bumps on every applied write (read-back trigger)
+    readback_sent: bool = False
+    idle_turns: int = 0                        # consecutive turns with no progress
 
     @property
     def issues(self) -> dict[str, Issue]:
@@ -39,7 +44,16 @@ class Session:
 
     @property
     def remaining(self) -> list[str]:
-        return [f for f in self.needed if f not in self.saved and f not in self.refused]
+        return [f for f in self.needed
+                if f not in self.saved and f not in self.refused and f not in self.gave_up]
+
+    @property
+    def last_agent_message(self) -> str:
+        return next((t["text"] for t in reversed(self.transcript) if t["role"] == "agent"), "")
+
+    def progress_signature(self) -> tuple:
+        return (self.save_events, len(self.refused), bool(self.followup), self.identity,
+                len(self.escalations))
 
     @property
     def candidate_messages(self) -> list[str]:

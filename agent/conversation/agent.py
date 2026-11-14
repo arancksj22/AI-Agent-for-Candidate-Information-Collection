@@ -4,22 +4,23 @@ from __future__ import annotations
 import re
 
 import dateparser
-from rapidfuzz import fuzz
 
-from agent.domain import schema
-from agent.llm import prompts
 from agent.adapters.candidate_api import ApiError, CandidateRepo
+from agent.adapters.runlog import RunLog
 from agent.adapters.terminal import EOF, Terminal
 from agent.config import IST, Config, now_ist
+from agent.conversation import guards
+from agent.conversation.session import Session
+from agent.domain import schema
 from agent.domain.diagnose import diagnose
+from agent.domain.policy import build_notes, compute_status
+from agent.llm import prompts
 from agent.llm.client import LLM, LLMUnavailable
 from agent.nlp.extract import extract_hints
 from agent.nlp.normalize import normalize, parse_date
-from agent.domain.policy import build_notes, compute_status
-from agent.adapters.runlog import RunLog
-from agent.conversation.session import Session
 
 QUIT_WORDS = {"/quit", "/exit", "/bye"}
+MAX_REJECTIONS_PER_FIELD = 3
 
 
 class Agent:
@@ -38,10 +39,12 @@ class Agent:
     # ================================================================ entry point
 
     def run(self, candidate_id: str) -> str:
+        self._recover_unfinished_writes(candidate_id)
         record = self.repo.get(candidate_id)
         d = diagnose(record)
         self.log("diagnosis", {"missing": d.missing, "invalid": [vars(i) for i in d.invalid],
-                               "optional_invalid": [vars(i) for i in d.optional_invalid]})
+                               "optional_invalid": [vars(i) for i in d.optional_invalid],
+                               "prior_state": d.prior_state})
 
         if d.complete:
             return self._already_complete(record)
@@ -56,6 +59,20 @@ class Agent:
             s.end_reason = s.end_reason or "chat interrupted (Ctrl+C)"
             print()
         return self._finalize(s)
+
+    def _recover_unfinished_writes(self, candidate_id: str) -> None:
+        """A previous run died mid-PATCH: replay it (same Idempotency-Key, so it can't double-apply)."""
+        outbox = self.repo.outbox
+        if not outbox:
+            return
+        for intent in outbox.pending(candidate_id):
+            self.term.info(f"recovering an unfinished write from a previous run: {', '.join(intent['body'])}")
+            try:
+                res = self.repo.replay(intent)
+                self.log("recovered_write", {"key": intent["key"], "applied": res.applied,
+                                             "conflicts": res.conflicts})
+            except ApiError as e:
+                self.log("recovered_write_failed", {"key": intent["key"], "error": str(e)})
 
     def _already_complete(self, record: dict) -> str:
         self.term.info(f"{record['id']} {record['full_name']}: all mandatory fields are present and valid. "
@@ -83,9 +100,7 @@ class Agent:
     # ================================================================ conversation
 
     def _converse(self, s: Session) -> None:
-        opening = prompts.greeting(s)
-        self.term.say(opening)
-        s.add("agent", opening)
+        self._say(s, prompts.greeting(s))
 
         while True:
             msg = self._wait_for_reply(s)
@@ -105,6 +120,11 @@ class Agent:
                 s.end_reason = "turn limit reached"
                 self._say(s, prompts.QUIT_BYE)
                 return
+            if s.readback_sent and not s.remaining and guards.is_plain_yes(msg):
+                # Plain "yes" to the read-back summary: nothing to interpret, so no LLM call.
+                s.end_reason = "candidate confirmed the summary"
+                self._say(s, prompts.CONFIRMED_BYE)
+                return
             if self._turn(s, msg.strip()):
                 return
 
@@ -121,6 +141,9 @@ class Agent:
 
     def _turn(self, s: Session, msg: str) -> bool:
         """Handle one candidate message. Returns True when the conversation should end."""
+        before = s.progress_signature()
+        saves_before = s.save_events
+
         hints = extract_hints(msg)
         prompt = prompts.turn_prompt(s, hints, self.last_results, self.cfg.max_turns)
         try:
@@ -143,20 +166,27 @@ class Agent:
             except LLMUnavailable:
                 reply = "Sorry, I couldn't record that. Could you check it and send it again?"
             s.llm_calls = self.llm.calls
-        if not reply:
-            reply = "Sorry, could you say that again?"
-        self._say(s, reply)
-        self.last_results = results
 
-        if should_end:
+        reply, problems = guards.check_outgoing(reply)
+        if problems:
+            self.log("outgoing_guard", {"problems": problems})
+            self.term.info(f"outgoing message cleaned: {'; '.join(problems)}")
+        self._say(s, reply or "Sorry, could you say that again?")
+        self.last_results = results
+        s.idle_turns = 0 if s.progress_signature() != before else s.idle_turns + 1
+
+        if should_end and (s.escalations or s.identity == "denied" or s.refused or s.followup
+                           or s.remaining or s.gave_up or s.readback_sent):
             return True
-        if s.identity == "confirmed" and not s.remaining and not s.refused:
-            # Code-detected end: the LLM's reply may not be a goodbye, so add one. With refused fields
-            # we don't force it: the LLM closes next turn, or the candidate changes their mind.
-            s.end_reason = "everything collected"
-            self._say(s, prompts.DONE_BYE)
-            return True
-        return False
+        if s.identity == "confirmed" and not s.remaining and not s.refused and not s.gave_up \
+                and not s.escalations:
+            if not s.readback_sent or s.save_events != saves_before:
+                # Everything is in. Read it back once (template, no LLM call) to catch extraction
+                # mistakes; a correction re-triggers the read-back.
+                s.readback_sent = True
+                self._say(s, prompts.readback(s))
+                return False
+        return should_end
 
     # ================================================================ action execution
 
@@ -190,14 +220,20 @@ class Agent:
                     s.held.append(a)
                     results.append(f"save {field}: held until the candidate confirms their identity")
                     continue
-                ok, value, msg = self._check_save(s, a)
+                ok, value, msg = self._check_save(s, a, batch)
                 if ok:
                     batch[field] = value
                 else:
                     rejected = True
-                    s.failed_attempts[field] = s.failed_attempts.get(field, 0) + 1
                     results.append(f"save {field}={a.get('value')!r}: REJECTED. {msg}")
                     self.term.info(f"rejected {field}={a.get('value')!r}: {msg}")
+                    if not msg.startswith("INVALID: "):
+                        continue                 # a confirmation step or an LLM slip, not a wrong answer
+                    s.failed_attempts[field] = s.failed_attempts.get(field, 0) + 1
+                    if s.failed_attempts[field] >= MAX_REJECTIONS_PER_FIELD and field in s.needed:
+                        s.gave_up[field] = f"{s.failed_attempts[field]} answers were rejected by the rules"
+                        results.append(f"{field}: STOP asking for it; it's flagged for a human")
+                        self.term.info(f"giving up on {field} after {s.failed_attempts[field]} rejected answers")
             elif kind == "refuse":
                 if field in s.needed and field not in s.saved:
                     s.refused[field] = a.get("evidence") or "declined"
@@ -227,7 +263,7 @@ class Agent:
                 rejected = True
         return results, rejected, should_end
 
-    def _check_save(self, s: Session, a: dict) -> tuple[bool, object, str]:
+    def _check_save(self, s: Session, a: dict, batch: dict) -> tuple[bool, object, str]:
         field = a.get("field") or ""
         raw = (a.get("value") or "").strip()
         evidence = (a.get("evidence") or "").strip()
@@ -235,15 +271,20 @@ class Agent:
 
         if field not in schema.COLLECTABLE_FIELDS:
             return False, None, f"'{field}' isn't a field we collect."
+        if field in s.gave_up:
+            return False, None, f"{field} is flagged for a human; don't ask for it again."
         if field not in s.needed and field not in s.saved and field in schema.MANDATORY_FIELDS:
             on_file = s.record.get(field)
             if not confirmed:
-                return False, None, (f"{field} is already on file as {on_file!r} and is valid. Only change it "
-                                     f"if the candidate says it's wrong; confirm the new value with them first.")
+                return False, None, (f"CONFIRM: {field} is already on file as {on_file!r} and is valid. Only "
+                                     f"change it if the candidate says it's wrong; confirm the new value first.")
 
-        if not _grounded(evidence, s.candidate_messages):
+        if not guards.grounded(evidence, s.candidate_messages):
             return False, None, ("The evidence isn't the candidate's words. Only save what the candidate actually "
                                  "said; ask them directly.")
+        if guards.is_hedged(field, evidence) and not confirmed:
+            return False, None, (f"CONFIRM: the candidate hedged ({evidence!r}). Restate one exact value and ask "
+                                 f"them to confirm it; save it with candidate_confirmed=true once they say yes.")
 
         res = normalize(field, raw)
         if not res.ok:
@@ -251,21 +292,28 @@ class Agent:
                 value = res.value
             else:
                 hint = f" Suggested value to offer: {res.suggestion}." if res.suggestion else ""
-                return False, None, res.error + hint
+                prefix = "CONFIRM: " if res.soft else "INVALID: "
+                return False, None, prefix + res.error + hint
         else:
             value = res.value
 
-        if not _value_traceable(field, value, s, confirmed):
+        if not guards.value_traceable(field, value, s.candidate_messages, s.last_agent_message, confirmed):
             return False, None, (f"{value!r} doesn't appear in what the candidate said. Don't infer values: "
                                  f"ask them to confirm the exact {schema.FIELD_LABELS.get(field, field)}.")
+
+        known = guards.known_values(s.record, {**s.saved, **batch})
+        for rule, message in guards.cross_field_issues(field, value, known):
+            if rule not in s.soft_warned and not confirmed:
+                s.soft_warned.add(rule)        # raised once; accepted next time
+                return False, None, f"CHECK: {message}"
         return True, value, ""
 
     def _write(self, s: Session, batch: dict) -> list[str]:
         try:
             res = self.repo.patch(s.record, batch)
         except ApiError as e:
-            s.write_errors.append(f"could not save {', '.join(batch)} ({e})")
-            self.term.info(f"WRITE FAILED for {', '.join(batch)}: {e}")
+            s.write_errors.append(f"could not save {', '.join(batch)} ({e}); queued in the DLQ for replay")
+            self.term.info(f"WRITE FAILED for {', '.join(batch)}: {e} → dead-lettered for replay")
             return [f"save {', '.join(batch)}: NOT saved due to a system error; tell the candidate we couldn't "
                     f"save it right now and a team member will follow up"]
         s.record = res.record
@@ -273,6 +321,7 @@ class Agent:
         for k in res.applied:
             s.saved[k] = res.applied[k]
             s.refused.pop(k, None)             # they refused earlier but gave it after all
+            s.save_events += 1
             results.append(f"save {k}={res.applied[k]!r}: saved")
         for k in res.skipped_noop:
             s.saved[k] = batch[k]
@@ -314,74 +363,25 @@ class Agent:
         except ApiError as e:
             write_ok = False
             self.log("final_write_failed", {"error": str(e), "status": status})
-            print(f"\n!! Could not write the final status ({e}). Details are in the run log.")
+            print(f"\n!! Could not write the final status ({e}). It's in the DLQ for replay.")
 
         print("\n" + "-" * 60)
-        print(f"Outcome: {status}" + ("" if write_ok else "  (NOT written: API error)"))
+        print(f"Outcome: {status}" + ("" if write_ok else "  (NOT written yet: API error, dead-lettered)"))
         if s.saved:
             print("Saved: " + ", ".join(f"{k}={v}" for k, v in s.saved.items()))
         if s.remaining:
             print("Still needed: " + ", ".join(s.remaining))
         if s.refused:
             print("Refused: " + ", ".join(s.refused))
+        if s.gave_up:
+            print("Flagged for a human: " + ", ".join(s.gave_up))
         print(f"LLM calls: {s.llm_calls}")
         path = self.log.save(status=status, chat=True, llm_calls=s.llm_calls, end_reason=s.end_reason,
-                             saved=s.saved, refused=s.refused, remaining=s.remaining,
+                             saved=s.saved, refused=s.refused, remaining=s.remaining, gave_up=s.gave_up,
                              escalations=s.escalations, followup=s.followup, transcript=s.transcript,
                              final_record=s.record)
         print(f"Run log: {path}")
         return status
-
-
-# ==================================================================== helpers
-
-def _squash(text: str) -> str:
-    return re.sub(r"\s+", " ", text.lower()).strip()
-
-
-def _grounded(evidence: str, candidate_messages: list[str]) -> bool:
-    """The evidence must be (close to) something the candidate actually wrote."""
-    ev = _squash(evidence).strip(" .!,\"'")
-    if not ev:
-        return False
-    for m in candidate_messages:
-        mm = _squash(m)
-        if ev in mm or fuzz.partial_ratio(ev, mm) >= 90:
-            return True
-    return False
-
-
-def _value_traceable(field: str, value, s: Session, confirmed: bool) -> bool:
-    """For values that are easy to hallucinate, check the candidate (or a confirmed proposal) contains them."""
-    said = _words_to_digits(_squash(" ".join(s.candidate_messages)))
-    last_agent = next((_squash(t["text"]) for t in reversed(s.transcript) if t["role"] == "agent"), "")
-    pool = said + (" " + last_agent if confirmed else "")
-    if field == "email":
-        local = str(value).split("@")[0]
-        return local in pool.replace(" ", "")
-    if field == "cgpa":
-        return any(abs(float(n) - float(value)) < 0.005 for n in re.findall(r"\d+(?:\.\d+)?", pool))
-    if field == "graduation_year":
-        y = str(value)
-        return bool(re.search(rf"\b{y}\b|\b'?{y[2:]}\b", pool))
-    if field in ("linkedin_url", "github_url"):
-        tail = str(value).rstrip("/").rsplit("/", 1)[-1].lower()
-        return tail in pool
-    return True
-
-
-_DIGIT_WORDS = {"zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
-                "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10"}
-_DIGIT_WORD_RE = "|".join(_DIGIT_WORDS)
-
-
-def _words_to_digits(text: str) -> str:
-    """'eight point five' → '8.5', 'nine' → '9', so spelled-out answers still count as grounded."""
-    def point(m: re.Match) -> str:
-        frac = "".join(_DIGIT_WORDS[w] for w in m.group(2).split())
-        return f"{_DIGIT_WORDS[m.group(1)]}.{frac}"
-    text = re.sub(rf"\b({_DIGIT_WORD_RE}) point ((?:(?:{_DIGIT_WORD_RE})\s?)+)\b", point, text)
-    return re.sub(rf"\b({_DIGIT_WORD_RE})\b", lambda m: _DIGIT_WORDS[m.group(1)], text)
 
 
 def parse_date_time(text: str) -> str | None:
