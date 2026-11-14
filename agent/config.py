@@ -24,6 +24,7 @@ class Config:
     api_key: str
     gemini_api_key: str
     gemini_model: str
+    gemini_fallback_model: str
     gemini_thinking_budget: int
     nudge_after_s: float
     give_up_after_s: float
@@ -43,6 +44,8 @@ def load_config() -> Config:
         api_key=need("CANDIDATE_API_KEY"),
         gemini_api_key=os.environ.get("GEMINI_API_KEY", "").strip(),
         gemini_model=os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip(),
+        # A different model has its own free-tier quota, so it's a real fallback.
+        gemini_fallback_model=os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-2.5-flash-lite").strip(),
         gemini_thinking_budget=int(os.environ.get("GEMINI_THINKING_BUDGET", "512")),
         nudge_after_s=float(os.environ.get("NUDGE_AFTER_SECONDS", "60")),
         give_up_after_s=float(os.environ.get("GIVE_UP_AFTER_SECONDS", "120")),
