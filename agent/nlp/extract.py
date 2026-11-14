@@ -13,7 +13,7 @@ from dateparser.search import search_dates
 
 from agent.domain import schema
 from agent.config import now_ist
-from agent.nlp.normalize import _match_alias, normalize
+from agent.nlp.normalize import _match_alias, match_college, normalize
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*", re.I)
 URL_RE = re.compile(r"(?:https?://)?(?:www\.)?(?:linkedin\.com|github\.com)/[^\s,]+", re.I)
@@ -37,6 +37,35 @@ def _verdict(field: str, raw: str) -> str:
     if res.soft:
         return f"{field}={res.value!r} needs confirmation: {res.error}"
     return f"NOT valid as {field}: {res.error}"
+
+
+COLLEGE_CONTEXT = re.compile(r"college|colg|clg|university|uni\b|institute|studying|study at|student|from|"
+                             r"pursuing|padh|engg|engineering", re.I)
+# Aliases that are also everyday words or very short: only trusted with college context or a short reply.
+_RISKY_ALIASES = {"christ", "jain", "lovely", "alliance", "heritage", "flame", "ashoka", "amrita", "manipal",
+                  "amity", "reva", "pes", "bits", "vit", "jamia", "sastra", "psg", "ssn", "bms", "nirma"}
+
+
+def _college_hints(text: str, words: list[str]) -> list[str]:
+    short_reply = len(words) <= 5
+    has_context = bool(COLLEGE_CONTEXT.search(text))
+    found: dict[str, str] = {}
+    for n in (5, 4, 3, 2, 1):                          # longest phrase first
+        for i in range(len(words) - n + 1):
+            phrase = " ".join(words[i:i + n])
+            key = phrase.replace(" ", "")
+            if key in _RISKY_ALIASES and not has_context:      # "lovely", "christ": real words first
+                continue
+            if len(key) <= 3 and not (short_reply or has_context):
+                continue
+            if n == 1 and key in GENERIC_WORDS:
+                continue
+            official = match_college(phrase)
+            if official and official not in found.values() and not any(phrase in p for p in found):
+                found[phrase] = official
+    return [f"college mention '{p}' → likely '{o}'. If this is their college, offer the full name as a yes/no "
+            f"question; save the full name with candidate_confirmed=true only if they say yes, otherwise save "
+            f"their own words" for p, o in list(found.items())[:2]]
 
 
 def extract_hints(message: str) -> list[str]:
@@ -82,6 +111,8 @@ def extract_hints(message: str) -> list[str]:
         deg = _match_alias(g, schema.DEGREE_ALIASES, cutoff=95) if len(g) >= 4 or g in ("bca", "mca", "bsc") else None
         if deg and deg != "Other":
             hints.append(f"degree mention '{g}' → degree could be '{deg}'")
+
+    hints += _college_hints(text, words)
 
     if DATE_WORDS.search(text):
         try:

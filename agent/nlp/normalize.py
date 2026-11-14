@@ -104,6 +104,37 @@ def _length_checked(raw: Any, lo: int, hi: int, label: str) -> Result:
     return ok(text)
 
 
+_COLLEGE_INDEX: dict[str, str] | None = None
+
+
+def _college_index() -> dict[str, str]:
+    global _COLLEGE_INDEX
+    if _COLLEGE_INDEX is None:
+        from agent.domain.colleges import COLLEGES
+        idx: dict[str, str] = {}
+        for official, aliases in COLLEGES.items():
+            for name in [official, *aliases]:
+                idx.setdefault(_key(name), official)
+        _COLLEGE_INDEX = idx
+    return _COLLEGE_INDEX
+
+
+def match_college(text: Any) -> str | None:
+    """'djsce' / 'DJ Sanghvi' / 'Dwarkadas J Sanghvi Colege' → the official name, else None.
+    Exact alias first; fuzzy only for longer inputs (short acronyms are too easy to mis-hit)."""
+    key = _key(text)
+    if len(key) < 2:
+        return None
+    idx = _college_index()
+    if key in idx:
+        return idx[key]
+    if len(key) >= 8:
+        match = process.extractOne(key, list(idx), scorer=fuzz.ratio)
+        if match and match[1] >= 92:
+            return idx[match[0]]
+    return None
+
+
 def normalize_college(raw: Any) -> Result:
     return _length_checked(raw, 2, 150, "College name")
 

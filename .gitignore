@@ -23,6 +23,7 @@ pip-wheel-metadata/
 venv/
 env/
 ENV/
+explain.md
 
 # Tooling caches
 .pytest_cache/
@@ -57,5 +58,6 @@ cdk.out/
 *.swp
 .DS_Store
 Thumbs.db
+
 
 # Note: runs/ is NOT ignored — sample transcripts are a required deliverable

@@ -163,6 +163,7 @@ class Agent:
             s.llm_calls = self._llm.calls if self._llm else 0
 
         results, rejected, should_end = executed or self._execute(s, out)
+        self._remember(s, msg, out, results)
         reply = (out.get("reply") or "").strip()
         if streamed is not None:                 # already shown sentence by sentence, guards applied
             if streamed:
@@ -230,6 +231,29 @@ class Agent:
             printer.close()
             return out, executed, printer.text
         return out, executed, None
+
+    def _remember(self, s: Session, msg: str, out: dict, results: list[str]) -> None:
+        """One compact line per turn, written by code (no LLM). Old turns drop out of the transcript the
+        LLM sees, but their gist stays in the state card through these lines."""
+        fired = [k for k, on in self.flags.items() if on]
+        for k in fired:
+            s.signal_counts[k] = s.signal_counts.get(k, 0) + 1
+        said = re.sub(r"\s+", " ", msg).strip()
+        said = said if len(said) <= 60 else said[:57] + "..."
+        outcome = []
+        for r in results:
+            r = re.sub(r"^save (\w+)=(.*?): saved$", r"saved \1=\2", r)
+            r = re.sub(r"^save (\w+)=(.*?): REJECTED\. (?:INVALID: |CONFIRM: |CHECK: )?", r"\1=\2 not saved: ", r)
+            outcome.append(r[:80])
+        mood = out.get("sentiment")
+        line = f"t{s.turns}: candidate said {said!r}"
+        if fired:
+            line += f" [{', '.join(fired)}]"
+        if mood and mood != "ok":
+            line += f" ({mood})"
+        if outcome:
+            line += " → " + "; ".join(outcome)
+        s.timeline.append(line)
 
     def _after_reply(self, s: Session, should_end: bool, saves_before: int) -> bool:
         if s.forced_end:

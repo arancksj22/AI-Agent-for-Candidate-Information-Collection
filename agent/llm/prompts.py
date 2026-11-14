@@ -105,6 +105,11 @@ UNUSUAL SITUATIONS
 - "Same as before" / "you already have it": check the state card; if it's on file, say so and move
   on; if not, explain it isn't on file and ask again.
 - Never state facts about the company, the role or the process beyond what's in these instructions.
+- College names: if the PRE-CHECKS suggest a full official name for a short form ("djsce"), ask
+  "Just to confirm, that's Dwarkadas J. Sanghvi College of Engineering, Mumbai?" in the same reply as
+  your next question. Yes → save the full name (candidate_confirmed=true). No, or no suggestion → save
+  the college exactly as they wrote it. Never expand an acronym yourself.
+- The state card's EARLIER IN THIS CHAT lines summarise messages that are no longer shown; trust them.
 15. Style: warm, concise, WhatsApp-like. 1-3 short sentences. No markdown, no bullet lists, no emojis
     unless the candidate uses them. Reply in the candidate's language (Hinglish is fine), but always
     save values in English.
@@ -190,11 +195,21 @@ def state_card(s: Session, max_turns: int) -> str:
         lines.append("READ-BACK SENT: the summary is waiting for the candidate's confirmation.")
     if s.idle_turns >= 3:
         lines.append(f"No progress for {s.idle_turns} turns: offer to continue another time.")
+    shown_from = max(0, s.turns - TRANSCRIPT_TURNS)        # turns before this aren't in the transcript
+    older = [t for t in s.timeline if int(t[1:t.index(":")]) <= shown_from]
+    if older:
+        lines.append("EARLIER IN THIS CHAT (code summary of messages no longer shown):")
+        lines += [f"  {t}" for t in older[-15:]]
+    if s.signal_counts:
+        lines.append("Patterns so far: " + ", ".join(f"{k}×{v}" for k, v in s.signal_counts.items()))
     lines.append(f"Turn {s.turns} of {max_turns}")
     known = {f: r.get(f) for f in schema.MANDATORY_FIELDS
              if f not in s.needed and f != "phone" and r.get(f) is not None}
     lines.append("Already on file (don't ask again): " + ", ".join(f"{k}={v}" for k, v in known.items()))
     return "\n".join(lines)
+
+
+TRANSCRIPT_TURNS = 6                                         # ≈ the last 12 messages
 
 
 def transcript_text(s: Session, last: int = 12) -> str:

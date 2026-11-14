@@ -35,6 +35,8 @@ class Session:
     idle_turns: int = 0                        # consecutive turns with no progress
     hostile_turns: int = 0                     # turns with abusive words + angry sentiment
     forced_end: str = ""                       # set when code (not the LLM) ends the chat
+    timeline: list = field(default_factory=list)   # one compact code-written line per turn
+    signal_counts: dict = field(default_factory=dict)  # signal -> how many turns it fired
 
     @property
     def issues(self) -> dict[str, Issue]:
