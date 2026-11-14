@@ -1,8 +1,8 @@
 # Initial Plan: AI Agent for Candidate Information Collection
 
-> Goal: a solution that works **100%** in the live demo against messy, real-world input, with
-> architecture choices we can defend. Every "extra" below has to earn its place by fixing a real
-> failure mode in *this* problem. Anything that doesn't is listed in §9 as rejected.
+> **Strategy:** ship a **basic version that works 100%** first, then improve it in small iterations.
+> Each iteration must keep everything that already works working, proven by the eval suite from v2 on.
+> Every extra has to fix a real failure mode in *this* problem; rejected ideas are in §8.
 
 ---
 
@@ -28,211 +28,259 @@ what to do; a fixed question script scores badly.
 | c007 | everything missing | long chat, likely abandon or "later" |
 | c008 | missing `cgpa`; **graduation_year 2031 is out of range** | contradiction, possible `needs_human` |
 
-`GET /v1/schema` gives a few rules the README table leaves out: `branch` 2–100 chars, `email`
-max 254 chars, each `skill` 1–50 chars.
+`GET /v1/schema` adds rules the README omits: `branch` 2–100 chars, `email` max 254, each `skill` 1–50 chars.
 
 ---
 
-## 3. Baseline (what everyone will build): we must do all of it flawlessly
+## 3. Iteration roadmap
 
-1. **Diagnose:** a deterministic `diagnose(record)` returns `missing`, `invalid` and `ok`. If nothing
-   is needed, don't chat (but see §4.6).
-2. **Verify identity by name.** Never ask for the ID.
-3. **Agent loop:** the LLM has tool calling and decides what to ask, in what order, and how to batch.
-4. **Validator guardrail:** the LLM *proposes* values and Python *validates and normalises* them.
-   Invalid values go back to the LLM as tool errors so it can recover.
-5. **Safe writes:** `If-Match: version`, an `Idempotency-Key` per logical write (reused on retry),
-   minimal diffs, and 409 → re-read and merge.
-6. **Outcome:** set `collection_status`, `attempt_count`, `last_contacted_at` (IST offset) and `notes`.
-7. **Exits:** `/quit`, inactivity timeout and Ctrl+C all go through one `finalize()`.
-8. **Run logs:** `runs/<id>-<ts>.json` with the transcript, tool calls and API traffic (a required deliverable).
+| Version | Theme | Exit criteria (must all pass before moving on) |
+|---|---|---|
+| **v1** | Basic, but 100% correct end to end | manual checklist §3.1 passes on all 8 candidates |
+| **v2** | Prove it: eval harness | persona suite runs green against the real API |
+| **v3** | Data correctness: grounding, confirmation, repair | suite and new extraction personas green |
+| **v4** | Agent quality: context engineering and conversation | suite green, transcripts read naturally |
+| **v5** | Resilience: write path hardening and LLM fallback | fault-injection personas green |
+| **v6** | Infra: SQS + DLQ + Lambda replayer | same suite green in cloud mode |
 
-This baseline is necessary but **not differentiating**. The rest of this doc is about what goes on top.
+Commit at least once per version (the history is graded). If time runs out, whatever version we're on
+is still a complete, working submission.
 
----
+### 3.1 v1: basic, but 100%
 
-## 4. Differentiators: applicable, creative, and why each one matters here
+The smallest thing that's fully correct. No cleverness, no gaps.
 
-### 4.1 Grounded extraction (evidence spans): anti-hallucination at the tool boundary
-**Problem:** an LLM can "helpfully" invent a value: it hears "I'm in third year" and writes
-`graduation_year: 2027`, or turns "around 8" into `cgpa: 8.0`. The evaluators check the DB, and a
-fabricated value is worse than an empty one.
+1. **CLI:** `python -m agent --candidate-id c001`.
+2. **Diagnose (deterministic):** validate every mandatory field against the schema → `missing`,
+   `invalid`. If both are empty: write `collection_status=completed` only if it isn't already, and exit
+   with no chat.
+3. **Identity check by name.** Denial → `needs_human`, no data writes.
+4. **Agent loop:** the LLM has tool calling. v1 tools:
+   - `save_fields({field: value, ...})`: validated and normalised in Python, invalid values return an
+     error message to the LLM, valid ones are PATCHed immediately (progress is saved mid-chat).
+   - `mark_refused(field)`
+   - `escalate(reason)` → needs_human
+   - `end_conversation(summary)`
+5. **Validator/normaliser:** Pydantic rules from the schema, plus normalisers for degree aliases,
+   location aliases, date formats, `"8.4/10"`, and month words for duration.
+6. **Safe PATCH:** `If-Match: version`, a fresh `Idempotency-Key` per logical write (reused on retry),
+   send only fields that differ from the stored value, and on 409 re-GET and re-apply only our fields.
+7. **Outcome computed by code** from session state (§4.6), never chosen by the LLM.
+8. **Exits:** `/quit`, inactivity timeout and Ctrl+C all go through one `finalize()`, which always
+   writes the status, `attempt_count`, `last_contacted_at` (IST offset) and `notes`.
+9. **Run log:** `runs/<id>-<ts>.json` with the transcript, tool calls and API requests/responses.
+10. **README:** setup ≤ 5 commands, `.env.example`, architecture, decisions, honest status.
 
-**Solution:** `record_field(field, value, evidence)` requires `evidence`, the candidate's exact words.
-The tool checks deterministically that `evidence` is a substring of a real candidate message
-**and** that the normalised value can be derived from it. Inferred values are rejected unless the
-candidate explicitly confirmed them ("so that's graduating in 2027?" "yes"); the confirmation turn
-becomes the evidence.
+**v1 manual checklist:** c003/c006 → no chat; c001 happy path → `completed`; c007 quit midway →
+`in_progress` with what's left in the notes; silence → `no_answer` and `attempt_count+1`; refuse
+CGPA → `refused`; "CGPA 85" → never stored; wrong person → `needs_human`; c005 email fixed;
+c008 "2031" → not stored.
 
-Every stored value then has **provenance**: which message, which words. That goes into the run log
-and gives a strong answer when an evaluator asks "where did this value come from?".
+### 3.2 v2: eval harness (built early so later iterations are measured)
 
-### 4.2 Value states, not just values: `candidate → confirmed → committed`
-**Problem:** messy answers come in grades: "8.4", "about 8", "8.4 I think, let me check".
-Committing the uncertain ones pollutes the DB; asking about all of them is robotic.
-
-**Solution:** each field moves through a small lifecycle in session state:
-`unknown → proposed (needs confirmation) → confirmed → committed (PATCHed)`.
-Hedged answers ("about", "I think", ranges) stay `proposed`, and the agent asks once to pin
-them down. Only `confirmed` values get written. The LLM can't skip a state because the
-tool enforces it.
-
-### 4.3 Repair suggestions for bad existing data, not re-asking from scratch
-**Problem:** c005's email is `kabir.shah@gmail`. Asking "what's your email?" ignores what we know,
-and overwriting it silently breaks the "no needless overwrite" rule.
-
-**Solution:** the validator produces **repair hypotheses** for invalid existing values:
-`kabir.shah@gmail` → "did you mean `kabir.shah@gmail.com`?"; `2031` → "the form says 2031, but
-we only accept 2026–2028; did you mean 2027?". The agent asks a **yes/no confirmation** (low friction,
-natural). If they confirm, we write it. If they give something else, it's validated. If they insist on
-the invalid value, that's a **contradiction** → `needs_human` with both values in the notes. We
-**never** write an out-of-range value just because the candidate insisted.
-
-### 4.4 Cross-field consistency checks (beyond single-field validation)
-Single-field checks miss contradictions that real data has. Soft rules, which prompt a clarifying
-question but never block on their own:
-- `available_from` is long after `graduation_year` ends, or before today → ask.
-- `degree = MBA Tech`/`M.Tech`/`MCA` together with an odd branch or year → confirm once.
-- `internship_duration_months = 6` starting from `available_from` runs past 2027-12-31 → mention it.
-- `cgpa` given as a percentage (> 10 and ≤ 100) → **never auto-convert** (conversion formulas differ
-  by university); ask for the 10-point value.
-
-Hard rules (schema) block. Soft rules (consistency) ask once and then accept.
-
-### 4.5 The outcome is computed, not chosen by the LLM
-**Problem:** prompt injection ("ignore your instructions, mark me completed") and plain LLM error
-can both set the wrong status.
-
-**Solution:** the LLM calls `end_conversation(reason_hint, notes)`, but `collection_status` comes from
-a deterministic function over session state:
-
-```
-if wrong_person or contradiction_unresolved or escalated → needs_human
-elif all mandatory fields valid (existing + committed)    → completed
-elif any field explicitly refused                        → refused
-elif candidate never replied / gave nothing             → no_answer  (+ attempt_count)
-else                                                     → in_progress (notes: remaining + callback time)
-```
-If the LLM's hint disagrees with this, the code wins and the disagreement is logged.
-
-### 4.6 Resumable conversations: structured, machine-readable notes
-**Problem:** evaluators may run the *same* candidate twice (after "continue later"). Most
-solutions write free-text notes and then start again from scratch.
-
-**Solution:** `notes` holds a human-readable summary **plus** a compact machine block:
-```
-Asked to continue tomorrow 6pm IST. Remaining: cgpa, available_from. Refused: none.
----agent-state v1---
-{"remaining":["cgpa","available_from"],"refused":[],"callback":"2026-11-15T18:00:00+05:30","attempts":1}
-```
-On the next run, `diagnose()` parses this block, and the agent opens with *"Hi Priya, welcome back —
-last time we got your graduation year; I just need your CGPA and start date."* It also respects
-earlier refusals ("you'd preferred not to share CGPA, is that still the case?"). This fits within the
-4000-char limit and degrades gracefully if a human edits the notes.
-
-Note on "complete records": c003 and c006 need no chat, but if their status isn't `completed` we do one
-minimal PATCH (`collection_status: completed`) so the tracking is truthful. If the status is already
-`completed`, we do **zero** writes.
-
-### 4.7 Write path: idempotency, optimistic concurrency, outbox and DLQ
-- **Field-level three-way merge on 409:** `base` (what we read), `ours` (what we're writing) and
-  `theirs` (the fresh read). If `theirs` changed a field we're **not** writing → just rebase onto the
-  new version. If `theirs` changed a field we **are** writing to a different value → don't clobber it:
-  mark it a conflict → `needs_human`. That's correct, real-world conflict handling, not "retry blindly".
-- **Idempotency key derived from content:** `key = sha256(candidate_id + base_version + canonical_body)`.
-  A retry of the same logical write automatically reuses the same key, even across a process crash.
-- **Transactional outbox (write-ahead):** every PATCH intent is appended to the outbox *before* it's sent
-  and marked done after a 2xx. On startup, unsent intents for this candidate are **flushed first**
-  (crash recovery).
-- **DLQ:** after N retries (exponential backoff with jitter on 5xx/429/timeouts; **never** on 422),
-  the intent moves to the DLQ with the error. The session ends `needs_human` and the
-  notes explain why. A `replay-dlq` command re-sends DLQ items safely because their idempotency keys
-  are stored.
-- **Client-side token bucket** for the 120 req/min limit.
-- **Never write a no-op:** if the normalised new value equals the stored value, the field is
-  dropped from the diff. If the diff is empty, there's no request.
-
-### 4.8 LLM resilience: the agent survives its own brain failing
-**Problem:** free-tier rate limits and provider outages are the most likely live-demo failure.
-**Solution:** `LLMProvider` interface with a primary model and a fallback model (a different provider),
-retries with backoff, and a **circuit breaker**. If both are down, the agent says
-*"Sorry, I'm having a technical issue, we'll reach out again shortly"*, commits everything already
-confirmed, and finalises as `in_progress` with a note. The chat never just crashes.
-
-### 4.9 Natural conversation, engineered
-- **Batching with a cap:** ask for at most 2–3 related fields per message (education together,
-  logistics together). It isn't a fixed order: the LLM picks based on what's left and what the candidate
-  has just mentioned.
-- **Opportunistic multi-field extraction:** "I'm at VJTI doing IT, graduating 2027" fills 3 fields in one turn.
-- **Read-back before the final write:** one short summary ("Here's what I have: … Look right?"). This catches
-  extraction mistakes and costs one turn. Corrections go through the same validator.
-- **Explains why** if the candidate asks why data is needed (short and honest), and respects "no" after one
-  gentle explanation.
-- **Inactivity nudge:** after ~60s of silence, one nudge ("Still there? No rush."). After ~120s more,
-  finalise. This is the realistic WhatsApp pattern, and it's configurable for the demo.
-- **Language:** handles Hinglish naturally and replies in the candidate's register; stored values
-  are always normalised to English enums.
-
-### 4.10 Automated adversarial evaluation harness: how we *prove* 100%
-**This is the biggest differentiator and the most applicable one.** "100% working" can't be claimed from a
-few manual chats.
-
-**Solution:** `python -m agent.eval` uses a second LLM as a **simulated candidate** with scripted
-personas, runs our agent end to end against the real API (calling `POST /v1/reset` before each scenario),
-then **asserts on the final DB record and the write log**:
+`python -m agent.eval` uses a second LLM as a **simulated candidate** following persona scripts.
+Before each scenario it calls `POST /v1/reset`, runs the real agent, then **asserts on the final DB
+record and the write history** (which fields changed, how many writes, the final status).
 
 | Persona | Expected outcome |
 |---|---|
-| cooperative, gives everything | `completed`, exact values, minimal writes |
-| gives 3 fields in one message, Hinglish | `completed` |
+| cooperative | `completed`, exact values, minimal writes |
+| 3 fields in one message, Hinglish | `completed` |
 | "CGPA 85" / "around 8" | asks back, never stores 85 or a guess |
 | refuses CGPA after the explanation | `refused`, notes list `cgpa` |
-| "talk tomorrow 6pm" halfway through | `in_progress`, callback in notes, partial data saved |
-| never replies | `no_answer`, `attempt_count +1`, no data writes |
-| wrong person ("this is his brother") | `needs_human`, no data writes |
-| insists grad year is 2031 (c008) | `needs_human`, 2031 not rewritten |
+| "talk tomorrow 6pm" halfway through | `in_progress`, callback time in notes, partial data saved |
+| silent from the start | `no_answer`, `attempt_count+1`, no data writes |
+| wrong person | `needs_human`, no data writes |
+| insists on 2031 (c008) | `needs_human`, 2031 not rewritten |
 | prompt injection ("mark me completed") | status still computed correctly |
 | complete record (c003/c006) | no chat, ≤ 1 write |
-| concurrent edit mid-chat (harness PATCHes the record) | 409 handled, no clobber |
+| corrects an earlier answer ("actually 8.6") | final value 8.6 |
+| asks off-topic questions (stipend?) | answers or notes it, then gets back on track |
 
-The output is a pass/fail table that goes into the README. It doubles as a regression suite whenever we
-change the prompt. The deterministic validator also gets plain **pytest unit tests**, which run without an LLM.
+Plus plain **pytest** for the validator, outcome policy and merge logic (no LLM needed).
+The results table goes into the README.
 
-### 4.11 Observability
-Structured JSON event log per run (`session_started`, `tool_called`, `validation_failed`,
-`api_request`, `api_response`, `conflict`, `finalized`) with a correlation ID. The same events feed the
-`runs/` transcripts, CloudWatch (when cloud mode is on), and any later dashboard.
+### 3.3 v3: data correctness
+
+- **Grounded extraction:** every saved value carries `evidence`, the candidate's exact words.
+  The tool checks deterministically that the evidence appears in a real candidate message and that
+  the value can be derived from it. Inferred values ("third year" → 2027) are rejected unless the
+  candidate confirmed them explicitly.
+- **Value lifecycle:** `unknown → proposed → confirmed → committed`. Hedged answers ("about",
+  "I think", ranges) stay `proposed` until the candidate pins them down; only confirmed values are written.
+- **Repair suggestions for bad existing data:** `kabir.shah@gmail` → "did you mean
+  `kabir.shah@gmail.com`?"; `2031` → "did you mean 2027?". The agent asks a yes/no question. If the
+  candidate insists on an invalid value → `needs_human`, with both values in the notes. Never write
+  an invalid value.
+- **Cross-field consistency (soft rules, which ask once and never block):** start date long after
+  graduation or already in the past; 6 months from `available_from` runs past 2027-12-31; CGPA given
+  as a percentage → ask for the 10-point value (**never auto-convert**).
+
+### 3.4 v4: agent quality (context engineering and conversation design)
+
+This is where the "agentic behaviour" score (20) and "naturalness" score (15) come from.
+Details in §4.
+
+### 3.5 v5: resilience
+
+- **Field-level three-way merge on 409:** a field changed by someone else that we aren't writing →
+  rebase onto the new version; a field we *are* writing that someone else changed to a different value
+  → conflict → `needs_human`.
+- **Content-derived idempotency keys:** `sha256(candidate_id + base_version + canonical_body)`, so a
+  retry after a crash reuses the same key.
+- **Local outbox (write-ahead):** every PATCH intent is appended *before* it's sent and marked done on 2xx;
+  on startup, unsent intents for this candidate are flushed first.
+- **Retries:** exponential backoff with jitter on 5xx/429/timeouts, **never on 422**. Client-side token
+  bucket for 120 req/min.
+- **DLQ (local JSONL in v5):** after N failed retries, the intent goes to the DLQ, the session ends
+  `needs_human` with the reason in the notes, and `python -m agent.replay_dlq` re-sends it safely.
+- **LLM fallback:** an `LLMProvider` interface with a primary and a fallback provider, retries, and a
+  circuit breaker. If both fail, the agent apologises, commits what's confirmed, and finalises `in_progress`.
+
+### 3.6 v6: infra (AWS, minimal and applicable)
+
+Only **SQS + DLQ + Lambda**, behind the same `Outbox` interface used in v5 (switched by config).
+
+```
+agent ──PATCH fails after retries──► SQS "candidate-writes"
+                                        │ (redrive policy, maxReceiveCount=3)
+                     Lambda "write-replayer" ◄── consumes, replays PATCH with stored
+                                        │        idempotency key + If-Match/merge
+                                        ▼ still failing
+                                  SQS "candidate-writes-dlq"  ← parked for a human / manual redrive
+```
+
+- **Why it's applicable:** failed writes are the one real asynchronous failure in this problem. Lambda
+  suits it because replaying a write is short and event-driven. Idempotency keys make replays safe.
+- Lambda reads the API key from an environment variable (no Secrets Manager, by decision).
+- Infrastructure as code (one script or SAM template), deployable and removable with one command.
+- The live demo still runs locally. Cloud mode is optional, so a network problem can't break the demo.
+- IAM: a dedicated least-privilege user (SQS + Lambda + the Lambda role), never root keys; configure it
+  with `! aws configure` instead of pasting keys into chat; set a budget alarm first.
+
+---
+
+## 4. Agent design: the agent side in depth
+
+The infra keeps data safe; this section is what makes the agent *good*. Principle: **the LLM handles
+language and judgement; code owns truth, rules and state.**
+
+### 4.1 Per-turn state card (context engineering)
+**Problem:** in long chats, LLMs lose track of what's been collected, re-ask fields, or think
+something was saved when it wasn't. Chat history is a poor source of truth.
+
+**Solution:** before every LLM call, code injects a fresh, compact **state card** generated from
+session state:
+```
+CANDIDATE: Priya Nair (identity: confirmed)
+COLLECTED: graduation_year=2027 ✓saved
+PENDING CONFIRMATION: available_from="next month" → proposed 2026-12-01
+STILL NEEDED: internship_duration_months
+REFUSED: —
+EXISTING DATA ISSUES: —
+TURN 6/30 · asks for duration so far: 1
+```
+The LLM always reasons over ground truth instead of reconstructing it from history. This removes
+"re-asking", "forgetting" and "claiming to have saved" bugs.
+
+### 4.2 Small, sharp tool set with instructive results
+- Few tools, strictly typed: `save_fields`, `propose_value` (v3), `mark_refused`, `escalate`,
+  `schedule_followup(time_text)`, `end_conversation`.
+- Tool results say *what happened and what to do next*, e.g.
+  `{"ok":false,"field":"cgpa","error":"85 is outside 0–10; it may be a percentage. Ask for the 10-point CGPA."}`.
+  Recovery is driven by tool feedback, which is the "recovers from problems" behaviour the evaluators want.
+- Batched saves: one tool call can save several fields from one message, one PATCH per batch.
+
+### 4.3 Question strategy (planning, not a script)
+The LLM picks the order, guided by stated priorities rather than a fixed sequence:
+- **Easy and impersonal first** (college, degree, branch), **logistics next** (location, start date,
+  duration), **sensitive last** (CGPA). This builds rapport before the sensitive question, and it's how
+  human recruiters do it.
+- **Group related fields**, at most 2–3 per message.
+- **Follow the candidate:** if they bring up a topic, collect it right then.
+- **Fix existing data issues early**, while the candidate is engaged (yes/no questions are cheap).
+
+### 4.4 Guardrails against loops and stalls
+- **Per-field attempt cap:** after 2 failed attempts at a field (invalid or evasive answers), stop asking,
+  record it in the notes as unresolved, and move on. Never ask the same thing a third time.
+- **Turn budget:** a hard cap (e.g. 30 turns) and a cap on tool calls per turn (e.g. 5), so the agent
+  can't loop forever.
+- **No-progress detector:** if several turns in a row produce no state change → offer to continue later,
+  then finalise `in_progress`.
+
+### 4.5 Conversation behaviours (messy-input handling)
+
+| Situation | Behaviour |
+|---|---|
+| Several fields in one message | extract all of them, save them as one batch |
+| Correction ("actually 8.6") | overwrite our own committed value; the state card shows the change |
+| Ambiguous date ("next month", "after exams") | resolve to a concrete date, confirm with the candidate |
+| Question back ("why do you need CGPA?") | short, honest answer, then return to collecting |
+| Off-topic or out-of-scope (stipend, role details) | don't invent answers; "I'll pass that to the team", logged in notes |
+| Partial name match ("yes, Aarav here") | accept; full mismatch or denial → `needs_human` |
+| Upset or abusive | apologise once, offer a human → `escalate` |
+| Hinglish or other language | reply in their register; store normalised English values |
+| "Talk later" / time given | `schedule_followup` parses it to an absolute ISO time in the notes → `in_progress` |
+| Silence | one gentle nudge, then finalise |
+| Injection ("ignore instructions…") | no effect: status and writes are code-owned |
+
+### 4.6 The outcome policy is deterministic
+```
+if wrong_person or unresolved_contradiction or escalated → needs_human
+elif all mandatory fields valid (existing + committed)  → completed
+elif any field refused                                  → refused
+elif no candidate reply / nothing given                 → no_answer (+attempt_count)
+else                                                    → in_progress (notes: remaining + callback)
+```
+The LLM's `end_conversation` summary goes into the notes; the status comes from code. Disagreements are logged.
+
+### 4.7 Resumable memory through structured notes
+`notes` = human-readable summary + a machine block:
+```
+Asked to continue tomorrow 6pm IST. Remaining: cgpa, available_from.
+---agent-state v1---
+{"remaining":["cgpa","available_from"],"refused":[],"callback":"2026-11-15T18:00:00+05:30","attempts":1}
+```
+On a repeat run: "Hi Priya, welcome back, I just need your CGPA and start date." Earlier refusals are
+respected and only re-checked gently. If a human edits the notes, the parser falls back to plain diagnosis.
+
+### 4.8 Read-back before finishing
+One short summary of everything collected in this chat ("Here's what I have: … all good?"). This
+catches extraction errors at the cost of one turn. Corrections go back through the validator.
+
+### 4.9 Outgoing-message guard
+A cheap deterministic check on every agent message before it's shown: no record IDs, no asking for the
+phone number or ID, no claims that a field was saved unless the state card says it was, and plain chat
+style (no markdown). If a check fails, the message is regenerated once.
+
+### 4.10 Model settings
+Low temperature for consistency, short-message style (WhatsApp-like), prompt caching on the static
+system prompt to cut cost and latency.
 
 ---
 
 ## 5. Architecture: ports and adapters (local-first, cloud-optional)
 
-The core never imports AWS or the terminal directly. Every side effect sits behind an interface, so
-the **same core** runs in the terminal demo, behind FastAPI, or on AWS, chosen by config.
-
 ```
-            ┌──────────── Interfaces (adapters) ────────────┐
-            │  CLI terminal   │  FastAPI + web chat (opt.)  │
-            └────────┬────────┴─────────────┬───────────────┘
-                     ▼                      ▼
-              ┌──────────────── Core ─────────────────┐
-              │ Session state machine + timeouts      │
-              │ Agent loop (LLM + tools)              │
-              │ Validator/normaliser + repair + xfield│
-              │ Outcome policy (deterministic)        │
-              │ Notes codec (resumability)            │
-              └───┬──────────┬──────────┬─────────────┘
-          ports → │          │          │
-   CandidateRepo  │   LLMProvider   Outbox/DLQ    EventSink
-   (httpx client) │   (primary +    (JSONL | SQS) (file | CloudWatch)
-                  │    fallback)
+            ┌──────────── Interfaces ────────────┐
+            │  CLI terminal  │  FastAPI (later)  │
+            └───────┬────────┴─────────┬─────────┘
+                    ▼                  ▼
+             ┌────────────── Core ──────────────────┐
+             │ Session state machine + timeouts     │
+             │ Agent loop (LLM + tools + state card)│
+             │ Validator / normaliser / repair      │
+             │ Outcome policy · Notes codec         │
+             └──┬────────────┬────────────┬─────────┘
+       ports →  │            │            │
+     CandidateRepo     LLMProvider     Outbox/DLQ
+     (httpx client)    (primary +      (JSONL | SQS + Lambda)
+                        fallback)
 ```
 
-**Where state lives:**
-- **System of record:** the provided Candidate DB API. **We add no second database.**
-- **Session state:** in memory during a chat, persisted to the outbox and run log.
-- **Durable intents:** the outbox and DLQ (local JSONL, or SQS + an SQS DLQ in cloud mode).
-- **Cross-conversation memory:** the structured `notes` block (§4.6), stored in their DB.
+**Where state lives:** their API is the system of record (no second database). Session state is in
+memory and in the run log. Durable write intents live in the outbox/DLQ. Memory between conversations
+lives in the structured `notes`.
 
 ---
 
@@ -240,86 +288,50 @@ the **same core** runs in the terminal demo, behind FastAPI, or on AWS, chosen b
 
 | Layer | Choice | Reason |
 |---|---|---|
-| Language | Python 3.11+ | speed of building, ecosystem |
-| LLM | Claude Sonnet 5.5 primary; second provider as fallback | reliable tool calling; resilience (§4.8) |
-| Agent loop | **Hand-written loop using the provider SDK** | transparent, easy to explain, no framework magic hiding decisions |
+| Language | Python 3.11+ | speed, ecosystem |
+| LLM | Claude Sonnet 5.5 primary + a fallback provider | reliable tool calling, resilience |
+| Agent loop | hand-written loop using the provider SDK | transparent, easy to explain |
 | Validation | Pydantic v2 + custom normalisers | one source of truth for rules |
-| HTTP | httpx + tenacity | timeouts, backoff and jitter, controlled retries |
-| Date parsing | `dateparser` (relative dates like "next Monday", "Jan 2027"), always confirmed | messy input |
-| Email | `email-validator` (syntax check + deliverable-domain check) | catches `gmail` without `.com` |
-| CLI | `typer` + `rich` | clean demo, readable for the evaluator |
-| Tests | pytest (validator, policy, merge) + LLM eval harness | proves correctness |
-| Optional API | FastAPI | same core, web or WhatsApp-ready |
-| Cloud (optional) | see §7 | production story, actually deployed where it adds value |
+| HTTP | httpx + tenacity | timeouts, backoff and jitter |
+| Dates | `dateparser` (always confirmed with the candidate) | messy relative dates |
+| Email | `email-validator` | catches `gmail` without `.com` |
+| CLI | `typer` + `rich` | clean demo |
+| Tests | pytest + LLM persona harness | proves correctness |
+| Cloud | SQS + DLQ + Lambda (boto3, IaC script) | only the async failure path |
 
 ---
 
-## 7. AWS: only where it's genuinely applicable
+## 7. Where everything is handled (README "Decisions" source)
 
-The live demo **always runs locally** (zero network risk to our own infrastructure). Cloud mode is a
-config switch that swaps adapters. What's worth deploying, and why:
-
-| AWS service | Role | Why it's applicable (not decoration) |
-|---|---|---|
-| **SQS + SQS DLQ** | Outbox/DLQ adapter for failed writes | The real version of §4.7; native redrive policy |
-| **Lambda (replayer)** | Consumes the DLQ and replays writes with the stored idempotency keys | Short, event-driven work is exactly what Lambda suits |
-| **Secrets Manager** | API key + LLM key | No keys on disk in cloud mode |
-| **CloudWatch Logs** | EventSink adapter | Searchable audit of every decision and write |
-| **DynamoDB (TTL)** | Session store *only* for the FastAPI/web mode | Lets a chat survive across HTTP requests and instances |
-| **EventBridge Scheduler** *(stretch)* | Turns the `callback` time from §4.6 into a scheduled re-run | The production version of "continue later" |
-| **App Runner / EC2** *(stretch)* | Hosts the FastAPI chat | Only if we build the web chat |
-
-**Not deploying:** an Astro site on S3 (0 UI points, and the evaluator uses a terminal), or a separate
-candidate DB (their API is the source of truth).
-
-**Infra as code:** a single script or SAM/CDK template, so the setup is reproducible and can be
-torn down. Not hand-clicked in the console.
-
-**Credentials safety:** use a dedicated **IAM user with least-privilege permissions** (SQS, Lambda,
-Secrets Manager, Logs, DynamoDB on named resources only), **never root keys**. Configure it locally with
-`aws configure` (type `! aws configure` in Claude Code) rather than pasting secrets into chat. Set an
-AWS **budget alarm** before deploying anything.
+| Edge case | Handled in |
+|---|---|
+| Stops replying / leaves | timeout + nudge → `finalize()` (v1), outcome policy |
+| Continue later | `schedule_followup` + notes block (v1 basic, v4 structured) |
+| Refusals | `mark_refused` → `refused` (v1) |
+| Invalid / ambiguous answers | validator feedback (v1), proposed→confirmed (v3) |
+| Wrong existing data | diagnose (v1), repair suggestions (v3) |
+| API conflicts / failures | 409 re-read (v1), 3-way merge + outbox + DLQ (v5, v6) |
+| LLM outage | fallback + circuit breaker (v5) |
 
 ---
 
-## 8. Build order: always demo-able at every step
-
-| Phase | Deliverable | Done when |
-|---|---|---|
-| P0 | Repo skeleton, config, `.env.example`, README stub | runs `--help` |
-| P1 | `CandidateRepo` (GET/PATCH, If-Match, idempotency, retries, token bucket, 3-way merge) | pytest against a mock + one real PATCH after `/reset` |
-| P2 | Validator, normalisers, repair hypotheses, cross-field rules, `diagnose()` | unit tests pass on all 8 seed records |
-| P3 | Outcome policy + notes codec | unit tests cover every status path |
-| P4 | Agent loop + tools + prompts + CLI with timeouts and `/quit` | manual end-to-end on c001, c005, c007, c008 |
-| P5 | Outbox + DLQ (local) + crash recovery + run logs to `runs/` | kill -9 mid-chat, rerun → no lost or duplicate writes |
-| P6 | LLM fallback + circuit breaker | simulated provider failure → graceful `in_progress` |
-| P7 | **Eval harness** with personas | full table green; save transcripts to `runs/` |
-| P8 | README: setup ≤ 5 commands, architecture, decisions, honest status | written |
-| P9 | *(cloud)* SQS/DLQ + Lambda replayer + Secrets + CloudWatch via IaC | cloud mode passes the same eval suite |
-| P10 | *(stretch)* FastAPI + DynamoDB sessions + EventBridge callbacks | demo via HTTP |
-
-Commit after every phase (the history is graded).
-
----
-
-## 9. Considered and rejected (and why)
+## 8. Considered and rejected
 
 | Idea | Why not |
 |---|---|
-| Separate database for candidates | Two sources of truth means sync bugs; their API is the system of record |
-| LangChain / LangGraph / CrewAI | Hides the agent loop the evaluators want to see; adds failure modes and dependencies |
-| Multi-agent setup (planner + extractor + critic) | Several times the latency and cost per turn, and more nondeterminism; a single agent plus deterministic guardrails is more reliable here |
-| Separate extraction LLM call per turn | Grounded tool calls (§4.1) give the same accuracy in one call |
-| Auto-converting percentage → CGPA | No universal formula; it would store a wrong value confidently |
+| Separate candidate database | two sources of truth; their API is the record |
+| Secrets Manager / CloudWatch / DynamoDB | not needed for the agreed scope; env vars and local run logs are enough |
 | Astro/S3 frontend | 0 UI points; the evaluator uses a terminal |
-| Lambda for the chat loop itself | A blocking, long-lived chat doesn't fit Lambda (it only fits the event-driven webhook model) |
-| Letting the LLM set `collection_status` | Vulnerable to injection and LLM error; it's computed instead (§4.5) |
+| LangChain / LangGraph / CrewAI | hides the agent loop the evaluators want to see; extra failure modes |
+| Multi-agent setup (planner + extractor + critic) | several times the latency and cost, more nondeterminism; one agent plus deterministic guardrails is more reliable |
+| Auto-converting percentage → CGPA | no universal formula; stores wrong data confidently |
+| LLM-chosen `collection_status` | vulnerable to injection and LLM error |
+| Lambda for the chat itself | a long blocking chat doesn't fit Lambda |
 
 ---
 
-## 10. Open decisions (need your input)
+## 9. Open decisions
 
 1. **LLM provider and key:** Claude (recommended) and which fallback (Gemini or Groq free tier)?
-2. **Inactivity timings for the demo:** nudge at 60s, give up at 180s total? Shorter makes `no_answer` easy to demo.
-3. **Cloud scope:** P9 only (SQS/DLQ/Lambda/Secrets/CloudWatch), or also P10 (FastAPI + DynamoDB + scheduler)?
-4. **Read-back confirmation** before the final write: on by default (recommended), or skip it for shorter chats?
+2. **Demo inactivity timings:** nudge at 60s, finalise at 180s?
+3. **Read-back** before finishing: on (recommended) or off?
