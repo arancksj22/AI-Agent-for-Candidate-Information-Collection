@@ -30,6 +30,10 @@ class Config:
     give_up_after_s: float
     max_turns: int
     runs_dir: Path
+    state_dir: Path                 # local outbox / DLQ / dev LLM cache
+    sqs_queue_url: str              # set → failed writes also go to SQS for the Lambda replayer
+    aws_region: str
+    llm_cache: bool                 # dev only: reuse identical LLM responses to save quota
 
 
 def load_config() -> Config:
@@ -51,4 +55,8 @@ def load_config() -> Config:
         give_up_after_s=float(os.environ.get("GIVE_UP_AFTER_SECONDS", "120")),
         max_turns=int(os.environ.get("MAX_TURNS", "30")),
         runs_dir=ROOT / "runs",
+        state_dir=ROOT / "state",
+        sqs_queue_url=os.environ.get("SQS_QUEUE_URL", "").strip(),
+        aws_region=os.environ.get("AWS_REGION", "us-east-1").strip(),
+        llm_cache=os.environ.get("LLM_CACHE", "0").strip() == "1",
     )

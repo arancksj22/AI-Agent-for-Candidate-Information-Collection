@@ -1,9 +1,11 @@
 """Client for the Candidate DB API: safe, minimal, idempotent writes."""
 from __future__ import annotations
 
+import hashlib
 import json
+import threading
 import time
-import uuid
+from collections import deque
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -12,6 +14,7 @@ import httpx
 from agent.config import Config
 
 RETRYABLE = {429, 500, 502, 503, 504}
+RATE_LIMIT_PER_MIN = 120
 
 
 class ApiError(Exception):
@@ -24,18 +27,42 @@ class ApiError(Exception):
 class PatchResult:
     record: dict                      # latest record after the write (or after re-reading)
     applied: dict = field(default_factory=dict)    # fields actually written
-    conflicts: dict = field(default_factory=dict)  # field -> {"ours": .., "theirs": ..}
+    conflicts: dict = field(default_factory=dict)  # field -> {"ours": .., "theirs": .., "was": ..}
     skipped_noop: list = field(default_factory=list)
 
 
+def idempotency_key(candidate_id: str, version: int, body: dict) -> str:
+    """Same logical write → same key, even across a crash, a replay from the DLQ, or the Lambda."""
+    canonical = json.dumps(body, sort_keys=True, separators=(",", ":"), default=str)
+    return hashlib.sha256(f"{candidate_id}|{version}|{canonical}".encode()).hexdigest()[:32]
+
+
+class RateLimiter:
+    """Sliding window: at most `limit` requests in any 60 s (the API allows 120/min)."""
+
+    def __init__(self, limit: int = RATE_LIMIT_PER_MIN):
+        self.limit, self.stamps, self.lock = limit, deque(), threading.Lock()
+
+    def wait(self) -> None:
+        with self.lock:
+            now = time.monotonic()
+            while self.stamps and now - self.stamps[0] > 60:
+                self.stamps.popleft()
+            if len(self.stamps) >= self.limit:
+                time.sleep(60 - (now - self.stamps[0]) + 0.05)
+            self.stamps.append(time.monotonic())
+
+
 class CandidateRepo:
-    def __init__(self, cfg: Config, log: Callable[[str, dict], None] | None = None):
+    def __init__(self, cfg: Config, log: Callable[[str, dict], None] | None = None, outbox=None):
         self.base = cfg.api_base_url
         self.client = httpx.Client(
             timeout=httpx.Timeout(15.0),
             headers={"Authorization": f"Bearer {cfg.api_key}"},
         )
         self.log = log or (lambda kind, data: None)
+        self.outbox = outbox
+        self.limiter = RateLimiter()
 
     # ------------------------------------------------------------ transport
 
@@ -44,7 +71,8 @@ class CandidateRepo:
         url = f"{self.base}{path}"
         last_exc: Exception | None = None
         for attempt in range(1, attempts + 1):
-            self.log("api_request", {"method": method, "path": path, "headers": _safe_headers(headers),
+            self.limiter.wait()
+            self.log("api_request", {"method": method, "path": path, "headers": headers,
                                      "body": body, "attempt": attempt})
             try:
                 resp = self.client.request(method, url, json=body, headers=headers)
@@ -95,9 +123,12 @@ class CandidateRepo:
         """Write `changes` on top of `base` (the record as we last read it).
 
         - Fields whose value already equals the stored value are dropped (no no-op writes).
-        - If-Match carries base["version"]; one Idempotency-Key per logical write, reused on retries.
-        - On 409, re-read: a field still equal to what we based our change on is re-applied on the
-          new version; a field someone else changed is NOT overwritten and is reported as a conflict.
+        - If-Match carries the version; the Idempotency-Key is derived from (id, version, body), so a
+          retry or a later replay of the same write reuses it and can't apply twice.
+        - On 409 (three-way merge): re-read; a field the other writer didn't touch (theirs == base)
+          is re-applied on the new version; a field they changed is NOT overwritten (conflict).
+        - The intent goes to the outbox before sending; if it still fails after retries it's
+          dead-lettered (local DLQ, plus SQS when configured) and the error is re-raised.
         """
         result = PatchResult(record=base)
         body = {}
@@ -111,22 +142,36 @@ class CandidateRepo:
 
         current = base
         for _ in range(3):
-            key = str(uuid.uuid4())
+            key = idempotency_key(current["id"], current["version"], body)
+            intent = {"key": key, "candidate_id": current["id"], "base_version": current["version"],
+                      "was": {k: base.get(k) for k in body}, "body": body}
+            if self.outbox:
+                self.outbox.begin(intent)
             headers = {"If-Match": f'"{current["version"]}"', "Idempotency-Key": key,
                        "Content-Type": "application/json"}
-            resp = self._request("PATCH", f"/v1/candidates/{current['id']}", body=body, headers=headers)
+            try:
+                resp = self._request("PATCH", f"/v1/candidates/{current['id']}", body=body, headers=headers)
+            except ApiError as e:
+                if self.outbox:
+                    where = self.outbox.dead_letter(intent, str(e))
+                    self.log("dead_lettered", {"key": key, "where": where, "error": str(e)})
+                raise
             if resp.status_code in (200, 201):
+                if self.outbox:
+                    self.outbox.done(key)
                 result.record = resp.json()
                 result.applied.update(body)
                 return result
+            if self.outbox:
+                self.outbox.done(key, status=f"http_{resp.status_code}")
             if resp.status_code == 409:
                 fresh = self.get(current["id"])
                 rebased = {}
                 for k, ours in body.items():
                     theirs, was = fresh.get(k), base.get(k)
                     if theirs == ours:
-                        continue                          # already has our value
-                    if theirs == was:
+                        result.applied[k] = ours          # already has our value (e.g. replayed)
+                    elif theirs == was:
                         rebased[k] = ours                 # untouched by the other writer → still ours
                     else:
                         result.conflicts[k] = {"ours": ours, "theirs": theirs, "was": was}
@@ -143,11 +188,11 @@ class CandidateRepo:
             raise ApiError(resp.status_code, resp.text[:300])
         raise ApiError(409, "record kept changing during the write")
 
-
-def _safe_headers(headers: dict | None) -> dict | None:
-    if not headers:
-        return None
-    return {k: v for k, v in headers.items() if k.lower() != "authorization"}
+    def replay(self, intent: dict) -> PatchResult:
+        """Re-send a stored intent (crash recovery / DLQ). Rebuilds the base it was computed on, so
+        the same Idempotency-Key is used and the three-way merge still protects newer edits."""
+        base = {"id": intent["candidate_id"], "version": intent["base_version"], **intent["was"]}
+        return self.patch(base, intent["body"])
 
 
 def _json_or_text(resp: httpx.Response) -> Any:
