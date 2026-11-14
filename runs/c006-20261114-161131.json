@@ -1,0 +1,56 @@
+{
+  "candidate_id": "c006",
+  "started_at": "2026-11-14T16:11:31+05:30",
+  "status": "completed",
+  "chat": false,
+  "llm_calls": 0,
+  "events": [
+    {
+      "at": "2026-11-14T16:11:31+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c006",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:11:32+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c006",
+      "status": 200,
+      "body": {
+        "id": "c006",
+        "full_name": "Ananya Desai",
+        "email": "ananya.desai@example.com",
+        "college": "NMIMS MPSTME, Shirpur",
+        "degree": "B.Tech",
+        "branch": "Data Science",
+        "graduation_year": 2027,
+        "cgpa": 8.25,
+        "preferred_location": "Mumbai",
+        "available_from": "2027-01-04",
+        "internship_duration_months": 6,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915756915293",
+        "collection_status": "completed",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 2,
+        "updated_at": "2026-11-14T10:39:10+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T16:11:32+05:30",
+      "kind": "diagnosis",
+      "missing": [],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": null
+    }
+  ]
+}

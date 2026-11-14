@@ -1,0 +1,65 @@
+{
+  "candidate_id": "c002",
+  "started_at": "2026-11-14T16:08:51+05:30",
+  "status": "completed",
+  "chat": false,
+  "llm_calls": 0,
+  "events": [
+    {
+      "at": "2026-11-14T16:08:52+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:08:53+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": 2027,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": "2027-04-15",
+        "internship_duration_months": 3,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "completed",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:53:37+05:30",
+        "notes": "[2026-11-14 15:53 IST] Agent chat → needs_human. Collected: graduation_year=2027, available_from=2027-04-15, internship_duration_months=3. Needs human: Candidate expressed frustration and expressed interest in interning at another company.. End reason: Escalated due to frustration and candidate preference for another company.. For the team: Candidate mentioned wanting to intern at another company instead of ACME and asked for help..\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 4,
+        "updated_at": "2026-11-14T10:38:40+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T16:08:53+05:30",
+      "kind": "diagnosis",
+      "missing": [],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": {
+        "remaining": [],
+        "refused": [],
+        "unresolved": [],
+        "callback": null,
+        "status": "needs_human"
+      }
+    }
+  ]
+}

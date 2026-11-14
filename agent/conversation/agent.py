@@ -78,13 +78,20 @@ class Agent:
                 self.log("recovered_write_failed", {"key": intent["key"], "error": str(e)})
 
     def _already_complete(self, record: dict) -> str:
-        self.term.info(f"{record['id']} {record['full_name']}: all mandatory fields are present and valid. "
-                       f"No conversation needed.")
-        if record.get("collection_status") != "completed":
+        name = record.get("full_name") or record["id"]
+        status = record.get("collection_status")
+        if status == "needs_human":
+            # A person was asked to look at this (escalation, conflict, upset candidate...). Filled-in
+            # fields don't resolve that, so the agent must not clear the flag.
+            print(f"\n{name}'s application ({record['id']}) has every detail filled in, but it's flagged for "
+                  f"a team member to review, so I won't start a chat or change anything.")
+            self.log.save(status="needs_human", chat=False, llm_calls=0)
+            return "needs_human"
+        print(f"\n{name}'s application ({record['id']}) is already complete. There's nothing to collect, "
+              f"so no chat is needed.")
+        if status != "completed":
             res = self.repo.patch(record, {"collection_status": "completed"})
-            self.term.info(f"collection_status → completed (v{res.record.get('version')})")
-        else:
-            self.term.info("Already marked completed; nothing written.")
+            self.term.info(f"status recorded as completed (v{res.record.get('version')})")
         self.log.save(status="completed", chat=False, llm_calls=0)
         return "completed"
 
@@ -103,6 +110,7 @@ class Agent:
     # ================================================================ conversation
 
     def _converse(self, s: Session) -> None:
+        print(f"Chatting as the agent for {s.candidate_id}. Type your replies as the candidate; /quit to leave.")
         self._say(s, prompts.greeting(s))
 
         while True:

@@ -22,15 +22,6 @@ for _stream in (sys.stdout, sys.stderr):
     except (AttributeError, ValueError):
         pass
 
-BANNER = "\n".join([
-    "",
-    "═" * 62,
-    "   ACME Candidate Information Agent",
-    "   AI chat agent that completes internship applications",
-    "   Made with ❤️  by Aranck",
-    "═" * 62,
-])
-
 
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
@@ -80,9 +71,6 @@ def main() -> int:
     log = RunLog(cfg.runs_dir, candidate_id)
     repo = CandidateRepo(cfg, log=log, outbox=Outbox(cfg))
     agent = Agent(cfg, repo, Terminal(show_actions=not args.quiet), log)
-    print(BANNER)
-    print(f"Chatting as the agent for {candidate_id}. Type your replies as the candidate; "
-          f"/quit to leave.\n")
     try:
         agent.run(candidate_id)
     except ApiError as e:

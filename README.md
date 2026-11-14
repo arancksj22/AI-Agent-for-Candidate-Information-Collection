@@ -36,8 +36,6 @@ Flags: `--quiet` hides the agent's action lines (the `· saved …` lines); `--n
 after **3 minutes**, the chat ends after **6 minutes** of silence. Every exit path goes through the same
 finalisation, so the record always gets a status, and anything already answered is already saved.
 
-Each chat opens with a short banner (project name, "Made with ❤️ by Aranck"), then the agent speaks.
-
 ## How it works
 
 ### One run, end to end
@@ -158,7 +156,7 @@ code checks on whatever the model tries to save.
 
 | Situation | What happens |
 |---|---|
-| Record already complete (c003, c006) | **Code.** No chat, no LLM call. Writes `completed` once if it isn't already; otherwise writes nothing. |
+| Record already complete (c003, c006) | **Code.** No chat, no LLM call; prints a one-line note ("…is already complete, nothing to collect"). Writes `completed` once if it isn't already; otherwise writes nothing. **Exception:** if the record is flagged `needs_human` (e.g. an earlier chat was escalated), the agent leaves it untouched, because filled-in fields don't resolve a hand-off to a person. |
 | Existing data looks wrong | **Code** diagnosis flags it with a suggestion: c005 `kabir.shah@gmail` → `@gmail.com`; c008 graduation year 2031 is out of range. The agent asks about it as a yes/no question and only writes a corrected, valid value. |
 | Valid existing data | Never overwritten unless the candidate says it's wrong and confirms the new value (**code**: the save needs `candidate_confirmed`). |
 | Only the name or phone is bad | **Code.** The agent can't fix these, so no chat: `needs_human`. |

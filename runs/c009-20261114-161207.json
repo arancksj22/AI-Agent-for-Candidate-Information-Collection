@@ -1,0 +1,27 @@
+{
+  "candidate_id": "c009",
+  "started_at": "2026-11-14T16:12:07+05:30",
+  "status": "error",
+  "error": "API error 404: candidate c009 not found",
+  "events": [
+    {
+      "at": "2026-11-14T16:12:07+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c009",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:12:08+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c009",
+      "status": 404,
+      "body": {
+        "detail": "Candidate not found"
+      }
+    }
+  ]
+}
