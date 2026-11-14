@@ -23,6 +23,7 @@ class Config:
     api_base_url: str
     api_key: str
     gemini_api_key: str
+    gemini_fallback_api_key: str
     gemini_model: str
     gemini_fallback_model: str
     gemini_thinking_budget: int
@@ -47,6 +48,8 @@ def load_config() -> Config:
         api_base_url=need("CANDIDATE_API_BASE_URL").rstrip("/"),
         api_key=need("CANDIDATE_API_KEY"),
         gemini_api_key=os.environ.get("GEMINI_API_KEY", "").strip(),
+        # A second key (another project) doubles the free-tier quota; tried when the first is exhausted.
+        gemini_fallback_api_key=os.environ.get("GEMINI_FALLBACK_API_KEY", "").strip(),
         gemini_model=os.environ.get("GEMINI_MODEL", "gemini-3.5-flash").strip(),
         # A different model has its own free-tier quota, so it's a real fallback.
         gemini_fallback_model=os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite").strip(),

@@ -1,0 +1,168 @@
+{
+  "candidate_id": "c002-silent",
+  "started_at": "2026-11-14T15:19:52+05:30",
+  "status": "no_answer",
+  "chat": true,
+  "llm_calls": 0,
+  "end_reason": "no reply (timed out)",
+  "saved": {},
+  "refused": {},
+  "remaining": [
+    "graduation_year",
+    "available_from",
+    "internship_duration_months"
+  ],
+  "gave_up": {},
+  "escalations": [],
+  "followup": null,
+  "transcript": [
+    {
+      "role": "agent",
+      "text": "Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?",
+      "at": "2026-11-14T15:19:54+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Are you still there? No rush, reply whenever you're ready.",
+      "at": "2026-11-14T15:19:54+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Looks like now isn't a good time. No worries, we'll reach out again later. Thanks!",
+      "at": "2026-11-14T15:19:54+05:30"
+    }
+  ],
+  "final_record": {
+    "id": "c002",
+    "full_name": "Priya Nair",
+    "email": "priya.nair@example.com",
+    "college": "VJTI, Mumbai",
+    "degree": "B.Tech",
+    "branch": "Information Technology",
+    "graduation_year": null,
+    "cgpa": 8.7,
+    "preferred_location": "Remote",
+    "available_from": null,
+    "internship_duration_months": null,
+    "linkedin_url": null,
+    "github_url": null,
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "phone": "+915887783493",
+    "collection_status": "no_answer",
+    "attempt_count": 1,
+    "last_contacted_at": "2026-11-14T15:19:54+05:30",
+    "notes": "[2026-11-14 15:19 IST] Agent chat → no_answer. Still needed: graduation_year, available_from, internship_duration_months. End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"no_answer\"}",
+    "version": 2,
+    "updated_at": "2026-11-14T09:49:54+00:00"
+  },
+  "events": [
+    {
+      "at": "2026-11-14T15:19:53+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:19:54+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": null,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 1,
+        "updated_at": "2026-11-14T09:49:52+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:19:54+05:30",
+      "kind": "diagnosis",
+      "missing": [
+        "graduation_year",
+        "available_from",
+        "internship_duration_months"
+      ],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": null
+    },
+    {
+      "at": "2026-11-14T15:19:54+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "headers": {
+        "If-Match": "\"1\"",
+        "Idempotency-Key": "d21b708dee280b3414a254648ea0efba",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "collection_status": "no_answer",
+        "last_contacted_at": "2026-11-14T15:19:54+05:30",
+        "attempt_count": 1,
+        "notes": "[2026-11-14 15:19 IST] Agent chat → no_answer. Still needed: graduation_year, available_from, internship_duration_months. End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"no_answer\"}"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:19:54+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": null,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "no_answer",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:19:54+05:30",
+        "notes": "[2026-11-14 15:19 IST] Agent chat → no_answer. Still needed: graduation_year, available_from, internship_duration_months. End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"no_answer\"}",
+        "version": 2,
+        "updated_at": "2026-11-14T09:49:54+00:00"
+      }
+    }
+  ]
+}

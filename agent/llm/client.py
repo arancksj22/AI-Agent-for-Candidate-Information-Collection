@@ -24,10 +24,19 @@ class LLM:
     def __init__(self, cfg: Config, system_prompt: str, log: Callable[[str, dict], None] | None = None):
         if not cfg.gemini_api_key:
             raise SystemExit("Missing GEMINI_API_KEY in .env")
+        keys = [("primary", cfg.gemini_api_key)]
+        if cfg.gemini_fallback_api_key:
+            keys.append(("fallback", cfg.gemini_fallback_api_key))
+        models = [cfg.gemini_model] + ([cfg.gemini_fallback_model] if cfg.gemini_fallback_model else [])
         # System instructions and JSON schemas need the v1beta API surface.
-        self.client = genai.Client(api_key=cfg.gemini_api_key,
-                                   http_options=types.HttpOptions(api_version="v1beta"))
-        self.models = [cfg.gemini_model] + ([cfg.gemini_fallback_model] if cfg.gemini_fallback_model else [])
+        clients = {label: genai.Client(api_key=key, http_options=types.HttpOptions(api_version="v1beta"))
+                   for label, key in keys}
+        # Each (key, model) pair has its own free-tier quota. Order: best model first on every key,
+        # then the lighter model on every key.
+        self.routes = [(label, clients[label], model) for model in models for label, _ in keys]
+        self.dead: set = set()                  # (key, model) pairs out of daily quota / not usable
+        self.cooling: dict = {}                 # (key, model) -> monotonic time it may be retried
+        self.models = models
         self.system_prompt = system_prompt
         self.thinking_budget = cfg.gemini_thinking_budget
         self.log = log or (lambda kind, data: None)
@@ -66,35 +75,43 @@ class LLM:
         return data
 
     def _call(self, prompt: str, schema: dict, purpose: str) -> dict:
+        """Try each (key, model) route once; a rate-limited route cools down for a minute, a route out
+        of daily quota (or unusable) is skipped for the rest of the run. Two passes in total."""
         last_err = None
-        for model in self.models:
-            for attempt in range(2):
+        for pass_no in range(2):
+            for label, client, model in self.routes:
+                route = (label, model)
+                if route in self.dead or self.cooling.get(route, 0) > time.monotonic():
+                    continue
                 self.calls += 1
                 started = time.time()
                 try:
-                    resp = self.client.models.generate_content(
-                        model=model, contents=prompt, config=self._config(schema))
+                    resp = client.models.generate_content(model=model, contents=prompt,
+                                                          config=self._config(schema))
                     data = json.loads(resp.text)
-                    self.log("llm_call", {"purpose": purpose, "model": model, "prompt": prompt,
+                    self.log("llm_call", {"purpose": purpose, "model": model, "key": label, "prompt": prompt,
                                           "response": data, "seconds": round(time.time() - started, 2),
                                           "usage": _usage(resp)})
                     return data
                 except errors.APIError as e:
                     last_err = e
-                    self.log("llm_error", {"purpose": purpose, "model": model, "code": e.code,
+                    self.log("llm_error", {"purpose": purpose, "model": model, "key": label, "code": e.code,
                                            "error": str(e)[:300]})
-                    if e.code not in RETRYABLE:
-                        break
-                    if e.code == 429 and "quota" in str(e).lower() and "PerDay" in str(e):
-                        break                                 # daily quota: retrying won't help
-                    time.sleep(2 + 3 * attempt)
+                    if e.code == 429 and "PerDay" in str(e) or e.code not in RETRYABLE:
+                        self.dead.add(route)          # daily quota gone, bad key, unknown model...
+                    else:
+                        self.cooling[route] = time.monotonic() + 60
                 except (json.JSONDecodeError, TypeError, ValueError) as e:
+                    last_err = e                      # malformed output: just try the next route
+                    self.log("llm_error", {"purpose": purpose, "model": model, "key": label,
+                                           "error": f"bad JSON: {e}"})
+                except Exception as e:                # network errors from the SDK's transport
                     last_err = e
-                    self.log("llm_error", {"purpose": purpose, "model": model, "error": f"bad JSON: {e}"})
-                except Exception as e:                        # network errors from the SDK's transport
-                    last_err = e
-                    self.log("llm_error", {"purpose": purpose, "model": model, "error": repr(e)[:300]})
-                    time.sleep(2)
+                    self.log("llm_error", {"purpose": purpose, "model": model, "key": label,
+                                           "error": repr(e)[:300]})
+            if pass_no == 0:
+                self.cooling.clear()                  # second pass: give rate-limited routes one more go
+                time.sleep(3)
         raise LLMUnavailable(str(last_err))
 
 

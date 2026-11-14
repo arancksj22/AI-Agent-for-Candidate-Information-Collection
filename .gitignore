@@ -39,6 +39,8 @@ npm-debug.log*
 # Logs and local state
 *.log
 logs/
+# local outbox, DLQ and dev LLM cache
+state/
 *.sqlite3
 *.db
 
