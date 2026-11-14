@@ -170,5 +170,6 @@ def greeting(s: Session) -> str:
 NUDGE = "Are you still there? No rush, reply whenever you're ready."
 TIMEOUT_BYE = "Looks like now isn't a good time. No worries, we'll reach out again later. Thanks!"
 QUIT_BYE = "No problem, we'll pick this up later. Thanks for your time!"
+DONE_BYE = "That's all I needed for now. Thanks for your time, the team will be in touch!"
 LLM_DOWN_BYE = ("Sorry, I'm having a technical issue on my side. I've saved what you shared, and "
                 "we'll reach out again shortly. Thanks for your patience!")

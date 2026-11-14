@@ -45,6 +45,8 @@ class Agent:
 
         if d.complete:
             return self._already_complete(record)
+        if not d.needed:
+            return self._not_collectable(record, d)
 
         s = Session(candidate_id=candidate_id, record=record, diagnosis=d)
         self.term.info(f"{record['full_name']}: needs {', '.join(s.needed)}")
@@ -65,6 +67,18 @@ class Agent:
             self.term.info("Already marked completed; nothing written.")
         self.log.save(status="completed", chat=False, llm_calls=0)
         return "completed"
+
+    def _not_collectable(self, record: dict, d) -> str:
+        """The only problems are in fields a chat can't fix (e.g. full_name). A human has to look."""
+        problems = "; ".join(f"{i.field}={i.current!r}: {i.problem}" for i in d.invalid)
+        self.term.info(f"Only non-collectable fields are invalid ({problems}). No chat; flagging for a human.")
+        stamp = now_ist().strftime("%Y-%m-%d %H:%M IST")
+        note = f"[{stamp}] Agent: no chat started. Invalid data the agent can't collect: {problems}."
+        old = record.get("notes")
+        res = self.repo.patch(record, {"collection_status": "needs_human",
+                                       "notes": (note + (f"\n\n--- earlier ---\n{old}" if old else ""))[:4000]})
+        self.log.save(status="needs_human", chat=False, llm_calls=0, final_record=res.record)
+        return "needs_human"
 
     # ================================================================ conversation
 
@@ -136,8 +150,11 @@ class Agent:
 
         if should_end:
             return True
-        if s.identity == "confirmed" and not s.remaining:
-            s.end_reason = s.end_reason or "everything collected"
+        if s.identity == "confirmed" and not s.remaining and not s.refused:
+            # Code-detected end: the LLM's reply may not be a goodbye, so add one. With refused fields
+            # we don't force it: the LLM closes next turn, or the candidate changes their mind.
+            s.end_reason = "everything collected"
+            self._say(s, prompts.DONE_BYE)
             return True
         return False
 
@@ -371,6 +388,8 @@ def parse_date_time(text: str) -> str | None:
     """'tomorrow 6pm' → '2026-11-15T18:00:00+05:30'. None if there's no recognisable time."""
     if not text:
         return None
+    # dateparser reads "IST" as Israel Standard Time; all our times are India time anyway.
+    text = re.sub(r"\bIST\b", "", text, flags=re.I).strip()
     dt = dateparser.parse(text, languages=["en", "hi"], settings={
         "PREFER_DATES_FROM": "future", "RELATIVE_BASE": now_ist().replace(tzinfo=None),
         "DATE_ORDER": "DMY"})
