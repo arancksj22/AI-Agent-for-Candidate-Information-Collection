@@ -1,0 +1,696 @@
+{
+  "candidate_id": "c007",
+  "started_at": "2026-11-14T15:28:47+05:30",
+  "status": "completed",
+  "chat": true,
+  "llm_calls": 5,
+  "end_reason": "candidate confirmed the summary",
+  "saved": {
+    "college": "NMIMS",
+    "degree": "M.Tech",
+    "branch": "comp eng",
+    "email": "vikram@gmail.com",
+    "graduation_year": 2027,
+    "preferred_location": "Bengaluru",
+    "cgpa": 3.9,
+    "internship_duration_months": 6,
+    "available_from": "2026-11-15"
+  },
+  "refused": {},
+  "remaining": [],
+  "gave_up": {},
+  "escalations": [],
+  "followup": null,
+  "transcript": [
+    {
+      "role": "agent",
+      "text": "Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?",
+      "at": "2026-11-14T15:28:49+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes",
+      "at": "2026-11-14T15:28:54+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?",
+      "at": "2026-11-14T15:28:58+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "vikarm @ gmail nmims mtech comp eng",
+      "at": "2026-11-14T15:29:11+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Got it! Thanks for sharing your college, degree, and branch. Could you please confirm your full email address (e.g. vikram@gmail.com)? Also, what is your expected graduation year and preferred location?",
+      "at": "2026-11-14T15:29:18+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "vikram@gmail.com 2027 blr",
+      "at": "2026-11-14T15:29:34+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thanks! Saved your email, graduation year (2027), and preferred location (Bengaluru). What date would you be available to start, and for how many months (2, 3, or 6)? Also, what is your current CGPA?",
+      "at": "2026-11-14T15:29:39+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "saath mahine aur kya 3.9",
+      "at": "2026-11-14T15:29:51+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Got your CGPA as 3.9! For the internship duration, we only offer 2, 3, or 6 months—which of those would work best for you? Also, what date could you start?",
+      "at": "2026-11-14T15:29:57+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "6 and 15th nonomber please",
+      "at": "2026-11-14T15:30:14+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thank you Vikram! I've noted your start date as 15th November 2026 and duration as 6 months.",
+      "at": "2026-11-14T15:30:19+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Quick check, here's what I've noted: college NMIMS, degree M.Tech, branch comp eng, email vikram@gmail.com, graduating in 2027, location Bengaluru, CGPA 3.9, 6 months internship, starting 15 Nov 2026. Is that all correct?",
+      "at": "2026-11-14T15:30:19+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes",
+      "at": "2026-11-14T15:30:30+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Great, your application is all set. Thanks for your time, the team will be in touch!",
+      "at": "2026-11-14T15:30:30+05:30"
+    }
+  ],
+  "final_record": {
+    "id": "c007",
+    "full_name": "Vikram Rao",
+    "email": "vikram@gmail.com",
+    "college": "NMIMS",
+    "degree": "M.Tech",
+    "branch": "comp eng",
+    "graduation_year": 2027,
+    "cgpa": 3.9,
+    "preferred_location": "Bengaluru",
+    "available_from": "2026-11-15",
+    "internship_duration_months": 6,
+    "linkedin_url": null,
+    "github_url": null,
+    "skills": null,
+    "phone": "+915232488646",
+    "collection_status": "completed",
+    "attempt_count": 2,
+    "last_contacted_at": "2026-11-14T15:30:30+05:30",
+    "notes": "[2026-11-14 15:30 IST] Agent chat → completed. Collected: college=NMIMS, degree=M.Tech, branch=comp eng, email=vikram@gmail.com, graduation_year=2027, preferred_location=Bengaluru, cgpa=3.9, internship_duration_months=6, available_from=2026-11-15. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}\n\n--- earlier ---\n[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.",
+    "version": 7,
+    "updated_at": "2026-11-14T10:00:31+00:00"
+  },
+  "events": [
+    {
+      "at": "2026-11-14T15:28:48+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c007",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:28:49+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": null,
+        "college": null,
+        "degree": null,
+        "branch": null,
+        "graduation_year": null,
+        "cgpa": null,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:28:32+05:30",
+        "notes": "[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.\n---agent-state v1---\n{\"remaining\":[\"email\",\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 2,
+        "updated_at": "2026-11-14T09:58:33+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:28:49+05:30",
+      "kind": "diagnosis",
+      "missing": [
+        "email",
+        "college",
+        "degree",
+        "branch",
+        "graduation_year",
+        "cgpa",
+        "preferred_location",
+        "available_from",
+        "internship_duration_months"
+      ],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": {
+        "remaining": [
+          "email",
+          "college",
+          "degree",
+          "branch",
+          "graduation_year",
+          "preferred_location",
+          "available_from",
+          "internship_duration_months",
+          "cgpa"
+        ],
+        "refused": [],
+        "unresolved": [],
+        "callback": null,
+        "status": "needs_human"
+      }
+    },
+    {
+      "at": "2026-11-14T15:28:58+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: unknown | today: Saturday 2026-11-14 15:28 IST\nSaved this chat: nothing yet\nStill needed: email (email address), college (college name), degree (degree), branch (branch / specialisation), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended needs_human\nTurn 1 of 30\nAlready on file (don't ask again): full_name=Vikram Rao\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: yes\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?"
+      },
+      "seconds": 2.76,
+      "usage": {
+        "prompt": 2292,
+        "output": 54,
+        "thinking": null
+      }
+    },
+    {
+      "at": "2026-11-14T15:28:58+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:29:17+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:29 IST\nSaved this chat: nothing yet\nStill needed: email (email address), college (college name), degree (degree), branch (branch / specialisation), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended needs_human\nTurn 2 of 30\nAlready on file (don't ask again): full_name=Vikram Rao\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: yes\nYou: Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?\nCandidate: vikarm @ gmail nmims mtech comp eng\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\ndegree mention 'mtech' → degree could be 'M.Tech'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "college",
+            "value": "NMIMS",
+            "evidence": "nmims",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "degree",
+            "value": "M.Tech",
+            "evidence": "mtech",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "branch",
+            "value": "comp eng",
+            "evidence": "comp eng",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Got it! Thanks for sharing your college, degree, and branch. Could you please confirm your full email address (e.g. vikram@gmail.com)? Also, what is your expected graduation year and preferred location?"
+      },
+      "seconds": 5.89,
+      "usage": {
+        "prompt": 2345,
+        "output": 225,
+        "thinking": 525
+      }
+    },
+    {
+      "at": "2026-11-14T15:29:17+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "college",
+          "value": "NMIMS",
+          "evidence": "nmims",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "degree",
+          "value": "M.Tech",
+          "evidence": "mtech",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "branch",
+          "value": "comp eng",
+          "evidence": "comp eng",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:29:17+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"2\"",
+        "Idempotency-Key": "2d05d5ea23c5821e1a2ba27440db69fb",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:29:18+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": null,
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng",
+        "graduation_year": null,
+        "cgpa": null,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:28:32+05:30",
+        "notes": "[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.\n---agent-state v1---\n{\"remaining\":[\"email\",\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 3,
+        "updated_at": "2026-11-14T09:59:18+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:29:38+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:29 IST\nSaved this chat: college=NMIMS, degree=M.Tech, branch=comp eng\nStill needed: email (email address), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended needs_human\nTurn 3 of 30\nAlready on file (don't ask again): full_name=Vikram Rao\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: yes\nYou: Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?\nCandidate: vikarm @ gmail nmims mtech comp eng\nYou: Got it! Thanks for sharing your college, degree, and branch. Could you please confirm your full email address (e.g. vikram@gmail.com)? Also, what is your expected graduation year and preferred location?\nCandidate: vikram@gmail.com 2027 blr\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave college='NMIMS': saved\nsave degree='M.Tech': saved\nsave branch='comp eng': saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nemail 'vikram@gmail.com': valid email='vikram@gmail.com'\nyear '2027': if this is the graduation year → valid graduation_year=2027\nlocation mention 'blr' → preferred_location could be 'Bengaluru'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "email",
+            "value": "vikram@gmail.com",
+            "evidence": "vikram@gmail.com",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "graduation_year",
+            "value": "2027",
+            "evidence": "2027",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "preferred_location",
+            "value": "Bengaluru",
+            "evidence": "blr",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Thanks! Saved your email, graduation year (2027), and preferred location (Bengaluru). What date would you be available to start, and for how many months (2, 3, or 6)? Also, what is your current CGPA?"
+      },
+      "seconds": 3.73,
+      "usage": {
+        "prompt": 2483,
+        "output": 248,
+        "thinking": null
+      }
+    },
+    {
+      "at": "2026-11-14T15:29:38+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "email",
+          "value": "vikram@gmail.com",
+          "evidence": "vikram@gmail.com",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "graduation_year",
+          "value": "2027",
+          "evidence": "2027",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "preferred_location",
+          "value": "Bengaluru",
+          "evidence": "blr",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:29:38+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"3\"",
+        "Idempotency-Key": "bccd79bf2126835826bf96c9e0e519db",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "vikram@gmail.com",
+        "graduation_year": 2027,
+        "preferred_location": "Bengaluru"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:29:39+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng",
+        "graduation_year": 2027,
+        "cgpa": null,
+        "preferred_location": "Bengaluru",
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:28:32+05:30",
+        "notes": "[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.\n---agent-state v1---\n{\"remaining\":[\"email\",\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 4,
+        "updated_at": "2026-11-14T09:59:39+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:29:56+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:29 IST\nSaved this chat: college=NMIMS, degree=M.Tech, branch=comp eng, email=vikram@gmail.com, graduation_year=2027, preferred_location=Bengaluru\nStill needed: available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended needs_human\nTurn 4 of 30\nAlready on file (don't ask again): full_name=Vikram Rao\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: yes\nYou: Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?\nCandidate: vikarm @ gmail nmims mtech comp eng\nYou: Got it! Thanks for sharing your college, degree, and branch. Could you please confirm your full email address (e.g. vikram@gmail.com)? Also, what is your expected graduation year and preferred location?\nCandidate: vikram@gmail.com 2027 blr\nYou: Thanks! Saved your email, graduation year (2027), and preferred location (Bengaluru). What date would you be available to start, and for how many months (2, 3, or 6)? Also, what is your current CGPA?\nCandidate: saath mahine aur kya 3.9\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave email='vikram@gmail.com': saved\nsave graduation_year=2027: saved\nsave preferred_location='Bengaluru': saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnumber '3.9': if this is the CGPA → valid cgpa=3.9\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "cgpa",
+            "value": "3.9",
+            "evidence": "3.9",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Got your CGPA as 3.9! For the internship duration, we only offer 2, 3, or 6 months—which of those would work best for you? Also, what date could you start?"
+      },
+      "seconds": 5.07,
+      "usage": {
+        "prompt": 2528,
+        "output": 131,
+        "thinking": 355
+      }
+    },
+    {
+      "at": "2026-11-14T15:29:56+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "cgpa",
+          "value": "3.9",
+          "evidence": "3.9",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:29:56+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"4\"",
+        "Idempotency-Key": "b232f3847078de80130798992636b691",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "cgpa": 3.9
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:29:57+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Bengaluru",
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:28:32+05:30",
+        "notes": "[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.\n---agent-state v1---\n{\"remaining\":[\"email\",\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 5,
+        "updated_at": "2026-11-14T09:59:57+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:30:18+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:30 IST\nSaved this chat: college=NMIMS, degree=M.Tech, branch=comp eng, email=vikram@gmail.com, graduation_year=2027, preferred_location=Bengaluru, cgpa=3.9\nStill needed: available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nPREVIOUS CONVERSATION: ended needs_human\nTurn 5 of 30\nAlready on file (don't ask again): full_name=Vikram Rao\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: yes\nYou: Awesome, thanks Vikram! Could you please share your email address, college name, and the degree you are pursuing?\nCandidate: vikarm @ gmail nmims mtech comp eng\nYou: Got it! Thanks for sharing your college, degree, and branch. Could you please confirm your full email address (e.g. vikram@gmail.com)? Also, what is your expected graduation year and preferred location?\nCandidate: vikram@gmail.com 2027 blr\nYou: Thanks! Saved your email, graduation year (2027), and preferred location (Bengaluru). What date would you be available to start, and for how many months (2, 3, or 6)? Also, what is your current CGPA?\nCandidate: saath mahine aur kya 3.9\nYou: Got your CGPA as 3.9! For the internship duration, we only offer 2, 3, or 6 months—which of those would work best for you? Also, what date could you start?\nCandidate: 6 and 15th nonomber please\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave cgpa=3.9: saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "internship_duration_months",
+            "value": "6",
+            "evidence": "6",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "available_from",
+            "value": "2026-11-15",
+            "evidence": "15th nonomber please",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Thank you Vikram! I've noted your start date as 15th November 2026 and duration as 6 months."
+      },
+      "seconds": 4.08,
+      "usage": {
+        "prompt": 2543,
+        "output": 177,
+        "thinking": 413
+      }
+    },
+    {
+      "at": "2026-11-14T15:30:18+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "internship_duration_months",
+          "value": "6",
+          "evidence": "6",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "available_from",
+          "value": "2026-11-15",
+          "evidence": "15th nonomber please",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:30:18+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"5\"",
+        "Idempotency-Key": "f2a3b5775e696785adf93290e02e6842",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "internship_duration_months": 6,
+        "available_from": "2026-11-15"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:30:19+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Bengaluru",
+        "available_from": "2026-11-15",
+        "internship_duration_months": 6,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:28:32+05:30",
+        "notes": "[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.\n---agent-state v1---\n{\"remaining\":[\"email\",\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 6,
+        "updated_at": "2026-11-14T10:00:19+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:30:30+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"6\"",
+        "Idempotency-Key": "4039068014c34ebfb7290832f478c372",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "collection_status": "completed",
+        "last_contacted_at": "2026-11-14T15:30:30+05:30",
+        "attempt_count": 2,
+        "notes": "[2026-11-14 15:30 IST] Agent chat → completed. Collected: college=NMIMS, degree=M.Tech, branch=comp eng, email=vikram@gmail.com, graduation_year=2027, preferred_location=Bengaluru, cgpa=3.9, internship_duration_months=6, available_from=2026-11-15. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}\n\n--- earlier ---\n[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate."
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:30:31+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "NMIMS",
+        "degree": "M.Tech",
+        "branch": "comp eng",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Bengaluru",
+        "available_from": "2026-11-15",
+        "internship_duration_months": 6,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "completed",
+        "attempt_count": 2,
+        "last_contacted_at": "2026-11-14T15:30:30+05:30",
+        "notes": "[2026-11-14 15:30 IST] Agent chat → completed. Collected: college=NMIMS, degree=M.Tech, branch=comp eng, email=vikram@gmail.com, graduation_year=2027, preferred_location=Bengaluru, cgpa=3.9, internship_duration_months=6, available_from=2026-11-15. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}\n\n--- earlier ---\n[2026-11-14 15:28 IST] Agent chat → needs_human. The person who replied said they are NOT the candidate; nothing was collected. Still needed: email, college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Needs human: person on the chat says they are not the candidate.",
+        "version": 7,
+        "updated_at": "2026-11-14T10:00:31+00:00"
+      }
+    }
+  ]
+}
