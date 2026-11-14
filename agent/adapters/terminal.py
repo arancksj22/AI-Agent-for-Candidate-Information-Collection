@@ -30,6 +30,15 @@ class Terminal:
     def say(self, text: str) -> None:
         print(f"\nAgent: {text}", flush=True)
 
+    def stream_start(self) -> None:
+        print("\nAgent: ", end="", flush=True)
+
+    def stream(self, text: str) -> None:
+        print(text, end="", flush=True)
+
+    def stream_end(self) -> None:
+        print("", flush=True)
+
     def info(self, text: str) -> None:
         if self.show_actions:
             print(f"  · {text}", flush=True)

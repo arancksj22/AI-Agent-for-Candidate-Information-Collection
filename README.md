@@ -166,7 +166,12 @@ one per conversation started.
 candidate message, plus 1 only when a value is rejected. Primary model `gemini-3.5-flash`, falling back
 to `gemini-3.5-flash-lite` (separate quota) on errors. With `GEMINI_FALLBACK_API_KEY` set, every
 key × model pair is a separate route: a rate-limited route rests for 60s, and one out of daily quota is
-skipped for the rest of the run. If both fail, the agent apologises, keeps what's
+skipped for the rest of the run.
+
+**Streaming:** the turn call is streamed. `reply` is the last field in the JSON schema, so the actions
+are complete before the reply starts: code executes them first, then prints the reply sentence by
+sentence, each through the outgoing check. If a save was rejected, nothing is streamed and the
+corrected reply comes from the repair call as before. Same single request, so no extra quota. If both fail, the agent apologises, keeps what's
 saved and ends `in_progress`.
 
 **NLP choices:** lightweight deterministic NLP around the LLM: regex, `dateparser` (relative dates,

@@ -1,6 +1,7 @@
 """The agent loop: one structured LLM call per candidate message; code executes and validates the actions."""
 from __future__ import annotations
 
+import json
 import re
 
 import dateparser
@@ -15,7 +16,7 @@ from agent.domain import schema
 from agent.domain.diagnose import diagnose
 from agent.domain.policy import build_notes, compute_status
 from agent.llm import prompts
-from agent.llm.client import LLM, LLMUnavailable
+from agent.llm.client import LLM, LLMStreamBroken, LLMUnavailable
 from agent.nlp.extract import extract_hints
 from agent.nlp.normalize import normalize, parse_date
 
@@ -147,7 +148,7 @@ class Agent:
         hints = extract_hints(msg)
         prompt = prompts.turn_prompt(s, hints, self.last_results, self.cfg.max_turns)
         try:
-            out = self.llm.json_call(prompt, prompts.TURN_SCHEMA, "turn")
+            out, executed, streamed = self._streamed_turn(s, prompt)
         except LLMUnavailable as e:
             s.llm_failed = True
             s.end_reason = f"language model unavailable ({str(e)[:120]})"
@@ -156,8 +157,16 @@ class Agent:
         finally:
             s.llm_calls = self._llm.calls if self._llm else 0
 
-        results, rejected, should_end = self._execute(s, out)
+        results, rejected, should_end = executed or self._execute(s, out)
         reply = (out.get("reply") or "").strip()
+        if streamed is not None:                 # already shown sentence by sentence, guards applied
+            if streamed:
+                s.add("agent", streamed)
+            else:                                # every sentence was dropped by the outgoing check
+                self._say(s, "Sorry, could you say that again?")
+            self.last_results = results
+            s.idle_turns = 0 if s.progress_signature() != before else s.idle_turns + 1
+            return self._after_reply(s, should_end, saves_before)
         if rejected and not should_end:          # a closing message doesn't need a corrected re-ask
             try:
                 fixed = self.llm.json_call(prompts.repair_prompt(prompt, reply, results),
@@ -174,7 +183,50 @@ class Agent:
         self._say(s, reply or "Sorry, could you say that again?")
         self.last_results = results
         s.idle_turns = 0 if s.progress_signature() != before else s.idle_turns + 1
+        return self._after_reply(s, should_end, saves_before)
 
+    def _streamed_turn(self, s: Session, prompt: str):
+        """Run the turn call as a stream. The schema puts `reply` last, so by the time the reply starts
+        the actions are complete: they're executed first, and the reply is streamed only if every save
+        went through (a rejected save still gets the non-streamed repair path). Each sentence goes
+        through the outgoing check before it's printed.
+        Returns (out, executed-or-None, streamed-text-or-None)."""
+        buf, executed, start, shown = "", None, None, 0
+        printer = _SentencePrinter(self.term, self.log)
+        try:
+            for piece in self.llm.stream_json(prompt, prompts.TURN_SCHEMA, "turn"):
+                buf += piece
+                if executed is None and start is None:
+                    m = re.search(r'"reply"\s*:\s*"', buf)
+                    if not m:
+                        continue
+                    try:
+                        head = json.loads(buf[:m.start()].rstrip().rstrip(",") + "}")
+                    except ValueError:
+                        start = -1                   # odd shape: don't stream this turn
+                        continue
+                    if "actions" not in head:
+                        start = -1                   # reply came before the actions: don't stream
+                        continue
+                    executed = self._execute(s, head)
+                    start = -1 if executed[1] else m.end()
+                if start and start > 0:
+                    text, _ = _decode_partial(buf[start:])
+                    printer.feed(text[shown:])
+                    shown = len(text)
+        except LLMStreamBroken:
+            if executed is None:
+                return self.llm.json_call(prompt, prompts.TURN_SCHEMA, "turn"), None, None
+            out = {"reply": printer.text or "Sorry, could you say that again?"}
+            printer.close()
+            return out, executed, printer.text or out["reply"]
+        out = json.loads(buf)
+        if start and start > 0:
+            printer.close()
+            return out, executed, printer.text
+        return out, executed, None
+
+    def _after_reply(self, s: Session, should_end: bool, saves_before: int) -> bool:
         if should_end and (s.escalations or s.identity == "denied" or s.refused or s.followup
                            or s.remaining or s.gave_up or s.readback_sent):
             return True
@@ -297,6 +349,11 @@ class Agent:
         else:
             value = res.value
 
+        if field == "cgpa" and not confirmed and not guards.scale_stated(s.candidate_messages[-2:]):
+            # 3.6 could be 3.6/4 or 3.6/10: don't guess. (Asked once; a confirmed answer passes.)
+            return False, None, (f"CONFIRM: the scale wasn't stated. Ask if {value:g} is on the 10-point scale "
+                                 f"(not 4-point); save it with candidate_confirmed=true once they say yes.")
+
         if not guards.value_traceable(field, value, s.candidate_messages, s.last_agent_message, confirmed):
             return False, None, (f"{value!r} doesn't appear in what the candidate said. Don't infer values: "
                                  f"ask them to confirm the exact {schema.FIELD_LABELS.get(field, field)}.")
@@ -382,6 +439,69 @@ class Agent:
                              final_record=s.record)
         print(f"Run log: {path}")
         return status
+
+
+def _decode_partial(raw: str) -> tuple[str, bool]:
+    """Decode the start of a JSON string body that may still be arriving. Returns (text, finished)."""
+    out, i = [], 0
+    while i < len(raw):
+        c = raw[i]
+        if c == "\\":
+            n = 6 if raw[i + 1:i + 2] == "u" else 2
+            if i + n > len(raw):
+                break                            # escape not complete yet
+            try:
+                out.append(json.loads('"' + raw[i:i + n] + '"'))
+            except ValueError:
+                pass
+            i += n
+            continue
+        if c == '"':
+            return "".join(out), True
+        out.append(c)
+        i += 1
+    return "".join(out), False
+
+
+class _SentencePrinter:
+    """Prints streamed text one sentence at a time, each through the outgoing-message check."""
+    SENTENCE_END = re.compile(r"(?<=[.!?])\s+")
+
+    def __init__(self, term, log):
+        self.term, self.log = term, log
+        self.pending, self.text, self.started, self.problems = "", "", False, []
+
+    def feed(self, piece: str) -> None:
+        self.pending += piece
+        parts = self.SENTENCE_END.split(self.pending)
+        for sentence in parts[:-1]:
+            self._emit(sentence)
+        self.pending = parts[-1]
+
+    def close(self) -> None:
+        if self.pending.strip():
+            self._emit(self.pending)
+        self.pending = ""
+        if self.started:
+            self.term.stream_end()
+        if self.problems:
+            self.term.info(f"outgoing message cleaned: {'; '.join(self.problems)}")
+
+    def _emit(self, sentence: str) -> None:
+        clean, problems = guards.check_outgoing(sentence)
+        if problems:
+            self.log("outgoing_guard", {"problems": problems})
+            self.problems += problems           # reported after the message, not in the middle of it
+        clean = clean.strip()
+        if not clean:
+            return
+        if not self.started:
+            self.term.stream_start()
+            self.started = True
+        else:
+            self.term.stream(" ")
+        self.term.stream(clean)
+        self.text = f"{self.text} {clean}".strip()
 
 
 def parse_date_time(text: str) -> str | None:

@@ -73,6 +73,15 @@ HEDGE_RE = re.compile(
 HEDGE_SENSITIVE = {"cgpa", "graduation_year", "available_from", "internship_duration_months"}
 
 
+SCALE_RE = re.compile(r"(/\s*10\b|out of 10\b|\b10[- ]?point|\bten[- ]point|\bon 10\b|\b10 (?:ke|me|mein) se\b|"
+                      r"\b10 scale|\bscale of 10\b|\bcgpa of 10\b)", re.I)
+
+
+def scale_stated(messages: list[str]) -> bool:
+    """'8.4/10', '8.4 out of 10', 'on a 10 point scale' → the CGPA's scale is explicit."""
+    return any(SCALE_RE.search(m or "") for m in messages)
+
+
 def is_hedged(field: str, evidence: str) -> bool:
     """'around 8', '2027 I think' → the value is only *proposed* until the candidate confirms it."""
     return field in HEDGE_SENSITIVE and bool(HEDGE_RE.search(evidence or ""))

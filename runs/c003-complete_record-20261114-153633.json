@@ -1,0 +1,107 @@
+{
+  "candidate_id": "c003-complete_record",
+  "started_at": "2026-11-14T15:36:33+05:30",
+  "status": "completed",
+  "chat": false,
+  "llm_calls": 0,
+  "events": [
+    {
+      "at": "2026-11-14T15:36:33+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c003",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:36:34+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c003",
+      "status": 200,
+      "body": {
+        "id": "c003",
+        "full_name": "Rohan Kulkarni",
+        "email": "rohan.kulkarni@example.com",
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "MBA Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": 7.92,
+        "preferred_location": "Bengaluru",
+        "available_from": "2027-01-11",
+        "internship_duration_months": 6,
+        "linkedin_url": null,
+        "github_url": "https://github.com/rohan-k-example",
+        "skills": [
+          "Go",
+          "Kubernetes"
+        ],
+        "phone": "+915487183360",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 1,
+        "updated_at": "2026-11-14T10:06:33+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:36:34+05:30",
+      "kind": "diagnosis",
+      "missing": [],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": null
+    },
+    {
+      "at": "2026-11-14T15:36:34+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c003",
+      "headers": {
+        "If-Match": "\"1\"",
+        "Idempotency-Key": "14fccf1631e214323eb9ef632af883e8",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "collection_status": "completed"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:36:35+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c003",
+      "status": 200,
+      "body": {
+        "id": "c003",
+        "full_name": "Rohan Kulkarni",
+        "email": "rohan.kulkarni@example.com",
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "MBA Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": 7.92,
+        "preferred_location": "Bengaluru",
+        "available_from": "2027-01-11",
+        "internship_duration_months": 6,
+        "linkedin_url": null,
+        "github_url": "https://github.com/rohan-k-example",
+        "skills": [
+          "Go",
+          "Kubernetes"
+        ],
+        "phone": "+915487183360",
+        "collection_status": "completed",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 2,
+        "updated_at": "2026-11-14T10:06:34+00:00"
+      }
+    }
+  ]
+}

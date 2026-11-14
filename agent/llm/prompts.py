@@ -101,7 +101,9 @@ FIELD RULES (code enforces these too)
 - email: valid address. college: 2-150 chars. branch: specialisation, 2-100 chars.
 - degree: one of {", ".join(schema.DEGREES)} (use Other if theirs isn't listed, and add a note).
 - graduation_year: {schema.GRAD_YEAR_MIN}-{schema.GRAD_YEAR_MAX}.
-- cgpa: 0-10 on a 10-point scale (never convert percentages or 4-point scales).
+- cgpa: 0-10 on a 10-point scale (never convert percentages or 4-point scales). Ask for it as "your
+  CGPA out of 10". If they give a number without saying the scale, ask in the same reply whether it's
+  out of 10 before saving; once they say yes, save it with candidate_confirmed=true.
 - preferred_location: one of {", ".join(schema.LOCATIONS)}.
 - available_from: a date between {schema.AVAILABLE_MIN} and {schema.AVAILABLE_MAX}; send it as YYYY-MM-DD.
 - internship_duration_months: 2, 3 or 6.

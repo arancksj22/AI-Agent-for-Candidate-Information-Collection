@@ -20,6 +20,10 @@ class LLMUnavailable(Exception):
     pass
 
 
+class LLMStreamBroken(LLMUnavailable):
+    """The stream started and then failed: some output may already have been used."""
+
+
 class LLM:
     def __init__(self, cfg: Config, system_prompt: str, log: Callable[[str, dict], None] | None = None):
         if not cfg.gemini_api_key:
@@ -95,12 +99,7 @@ class LLM:
                     return data
                 except errors.APIError as e:
                     last_err = e
-                    self.log("llm_error", {"purpose": purpose, "model": model, "key": label, "code": e.code,
-                                           "error": str(e)[:300]})
-                    if e.code == 429 and "PerDay" in str(e) or e.code not in RETRYABLE:
-                        self.dead.add(route)          # daily quota gone, bad key, unknown model...
-                    else:
-                        self.cooling[route] = time.monotonic() + 60
+                    self._mark(route, e, purpose)
                 except (json.JSONDecodeError, TypeError, ValueError) as e:
                     last_err = e                      # malformed output: just try the next route
                     self.log("llm_error", {"purpose": purpose, "model": model, "key": label,
@@ -113,6 +112,67 @@ class LLM:
                 self.cooling.clear()                  # second pass: give rate-limited routes one more go
                 time.sleep(3)
         raise LLMUnavailable(str(last_err))
+
+
+    # ------------------------------------------------------------ streaming
+
+    def _mark(self, route: tuple, e: errors.APIError, purpose: str) -> None:
+        self.log("llm_error", {"purpose": purpose, "model": route[1], "key": route[0], "code": e.code,
+                               "error": str(e)[:300]})
+        if e.code == 429 and "PerDay" in str(e) or e.code not in RETRYABLE:
+            self.dead.add(route)                  # daily quota gone, bad key, unknown model...
+        else:
+            self.cooling[route] = time.monotonic() + 60
+
+    def stream_json(self, prompt: str, schema: dict, purpose: str):
+        """Same request as json_call, but yields the raw JSON text as it arrives (one request, same quota).
+        A route that fails before sending anything falls through to the next one. If a stream breaks
+        midway, LLMStreamBroken is raised so the caller can decide what to do with what it already used."""
+        cache = self._cache_path(prompt, schema)
+        if cache and cache.exists():
+            data = json.loads(cache.read_text(encoding="utf-8"))
+            self.log("llm_call", {"purpose": purpose, "model": "cache", "prompt": prompt, "response": data})
+            yield json.dumps(data, ensure_ascii=False)
+            return
+        last_err = None
+        for label, client, model in self.routes:
+            route = (label, model)
+            if route in self.dead or self.cooling.get(route, 0) > time.monotonic():
+                continue
+            self.calls += 1
+            started, parts, last = time.time(), [], None
+            try:
+                for chunk in client.models.generate_content_stream(model=model, contents=prompt,
+                                                                   config=self._config(schema)):
+                    last = chunk
+                    piece = chunk.text or ""
+                    if piece:
+                        parts.append(piece)
+                        yield piece
+                data = json.loads("".join(parts))
+            except errors.APIError as e:
+                last_err = e
+                self._mark(route, e, purpose)
+                if parts:
+                    raise LLMStreamBroken(str(e)) from e
+                continue
+            except Exception as e:                    # bad JSON or a network drop
+                last_err = e
+                self.log("llm_error", {"purpose": purpose, "model": model, "key": label,
+                                       "error": f"stream: {e!r}"[:300]})
+                if parts:
+                    raise LLMStreamBroken(str(e)) from e
+                continue
+            self.log("llm_call", {"purpose": purpose, "model": model, "key": label, "prompt": prompt,
+                                  "response": data, "seconds": round(time.time() - started, 2),
+                                  "usage": _usage(last), "streamed": True})
+            if cache:
+                cache.parent.mkdir(parents=True, exist_ok=True)
+                cache.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+            return
+        # Every route was skipped or failed up front: one last try through the retrying path.
+        data = self._call(prompt, schema, purpose)
+        yield json.dumps(data, ensure_ascii=False)
 
 
 def _usage(resp) -> dict | None:
