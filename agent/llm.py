@@ -21,7 +21,9 @@ class LLM:
     def __init__(self, cfg: Config, system_prompt: str, log: Callable[[str, dict], None] | None = None):
         if not cfg.gemini_api_key:
             raise SystemExit("Missing GEMINI_API_KEY in .env")
-        self.client = genai.Client(api_key=cfg.gemini_api_key)
+        # System instructions and JSON schemas need the v1beta API surface.
+        self.client = genai.Client(api_key=cfg.gemini_api_key,
+                                   http_options=types.HttpOptions(api_version="v1beta"))
         self.models = [cfg.gemini_model] + ([cfg.gemini_fallback_model] if cfg.gemini_fallback_model else [])
         self.system_prompt = system_prompt
         self.thinking_budget = cfg.gemini_thinking_budget

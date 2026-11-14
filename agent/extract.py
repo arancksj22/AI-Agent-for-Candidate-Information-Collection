@@ -60,8 +60,11 @@ def extract_hints(message: str) -> list[str]:
             hints.append(f"year '{num}': if this is the graduation year → {_verdict('graduation_year', num)}")
         elif 1 <= value <= 24 and re.search(rf"{re.escape(num)}\s*(months?|mo|mahine|mahina)\b", text_wo, re.I):
             hints.append(f"duration '{num} months': {_verdict('internship_duration_months', num)}")
-        elif 10 < value <= 100:
+        elif 10 < value <= 100 and re.search(r"cgpa|gpa|pointer|percent|marks|score|grade", text, re.I):
             hints.append(f"number '{num}': if this is the CGPA → {_verdict('cgpa', num)}")
+        elif 10 <= value <= 99 and "." not in num and re.search(r"pass|grad|batch|year|saal", text, re.I):
+            hints.append(f"'{num}' may be a short graduation year → {_verdict('graduation_year', num)} "
+                         f"(confirm the full year with the candidate)")
 
     words = re.findall(r"[a-z]+", text.lower())
     grams = words + [a + b for a, b in zip(words, words[1:])] + \
@@ -88,8 +91,12 @@ def extract_hints(message: str) -> list[str]:
         except Exception:                      # dateparser can raise on odd input; hints are best-effort
             found = []
         for phrase, dt in found[:3]:
-            if re.fullmatch(r"\d+(\.\d+)?", phrase.strip()):
-                continue                       # bare numbers are not dates
+            p = phrase.strip()
+            if (re.fullmatch(r"\d+(\.\d+)?", p)                      # bare numbers
+                    or re.fullmatch(r"\d+\s*(months?|mo|weeks?)", p, re.I)  # durations
+                    or re.search(rf"\d\.{re.escape(p)}|{re.escape(p)}\s*(%|cgpa|gpa)", text, re.I)
+                    or re.fullmatch(r"\d{1,2}\s*/\s*(10|4)", p)):              # scores like 8.4/10
+                continue
             hints.append(f"date phrase '{phrase}' → {dt.strftime('%Y-%m-%d %H:%M')} (IST). If used as "
                          f"available_from → {_verdict('available_from', dt.date().isoformat())}")
     return list(dict.fromkeys(hints))

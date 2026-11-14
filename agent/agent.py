@@ -120,7 +120,7 @@ class Agent:
 
         results, rejected, should_end = self._execute(s, out)
         reply = (out.get("reply") or "").strip()
-        if rejected:
+        if rejected and not should_end:          # a closing message doesn't need a corrected re-ask
             try:
                 fixed = self.llm.json_call(prompts.repair_prompt(prompt, reply, results),
                                            prompts.REPAIR_SCHEMA, "repair_reply")
