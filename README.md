@@ -20,6 +20,14 @@ python -m agent --diagnose-all                       # what every candidate need
 python -m agent --candidate-id c001                  # start the chat
 ```
 
+**Fresh start (before a demo):** restore the original API data, clear local write state, then check.
+
+```bat
+python -m agent --reset
+rmdir /s /q state                                    & rem macOS/Linux: rm -rf state
+python -m agent --diagnose-all
+```
+
 Other commands:
 
 | Command | What it does |
