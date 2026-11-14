@@ -11,9 +11,9 @@ import re
 
 from dateparser.search import search_dates
 
-from . import schema
-from .config import now_ist
-from .normalize import _match_alias, normalize
+from agent.domain import schema
+from agent.config import now_ist
+from agent.nlp.normalize import _match_alias, normalize
 
 EMAIL_RE = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*", re.I)
 URL_RE = re.compile(r"(?:https?://)?(?:www\.)?(?:linkedin\.com|github\.com)/[^\s,]+", re.I)

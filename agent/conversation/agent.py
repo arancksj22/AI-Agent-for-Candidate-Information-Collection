@@ -3,18 +3,21 @@ from __future__ import annotations
 
 import re
 
+import dateparser
 from rapidfuzz import fuzz
 
-from . import prompts, schema
-from .api_client import ApiError, CandidateRepo
-from .chat_io import EOF, Terminal
-from .config import Config, now_ist
-from .diagnose import diagnose
-from .llm import LLM, LLMUnavailable
-from .normalize import normalize, parse_date
-from .policy import build_notes, compute_status
-from .runlog import RunLog
-from .session import Session
+from agent.domain import schema
+from agent.llm import prompts
+from agent.adapters.candidate_api import ApiError, CandidateRepo
+from agent.adapters.terminal import EOF, Terminal
+from agent.config import IST, Config, now_ist
+from agent.domain.diagnose import diagnose
+from agent.llm.client import LLM, LLMUnavailable
+from agent.nlp.extract import extract_hints
+from agent.nlp.normalize import normalize, parse_date
+from agent.domain.policy import build_notes, compute_status
+from agent.adapters.runlog import RunLog
+from agent.conversation.session import Session
 
 QUIT_WORDS = {"/quit", "/exit", "/bye"}
 
@@ -104,8 +107,6 @@ class Agent:
 
     def _turn(self, s: Session, msg: str) -> bool:
         """Handle one candidate message. Returns True when the conversation should end."""
-        from .extract import extract_hints        # imported here so dateparser loads only when chatting
-
         hints = extract_hints(msg)
         prompt = prompts.turn_prompt(s, hints, self.last_results, self.cfg.max_turns)
         try:
@@ -116,7 +117,7 @@ class Agent:
             self._say(s, prompts.LLM_DOWN_BYE)
             return True
         finally:
-            s.llm_calls = self.llm.calls
+            s.llm_calls = self._llm.calls if self._llm else 0
 
         results, rejected, should_end = self._execute(s, out)
         reply = (out.get("reply") or "").strip()
@@ -254,9 +255,11 @@ class Agent:
         results = []
         for k in res.applied:
             s.saved[k] = res.applied[k]
+            s.refused.pop(k, None)             # they refused earlier but gave it after all
             results.append(f"save {k}={res.applied[k]!r}: saved")
         for k in res.skipped_noop:
             s.saved[k] = batch[k]
+            s.refused.pop(k, None)
             results.append(f"save {k}={batch[k]!r}: already on file, nothing to change")
         for k, c in res.conflicts.items():
             s.conflicts[k] = c
@@ -333,7 +336,7 @@ def _grounded(evidence: str, candidate_messages: list[str]) -> bool:
 
 def _value_traceable(field: str, value, s: Session, confirmed: bool) -> bool:
     """For values that are easy to hallucinate, check the candidate (or a confirmed proposal) contains them."""
-    said = _squash(" ".join(s.candidate_messages))
+    said = _words_to_digits(_squash(" ".join(s.candidate_messages)))
     last_agent = next((_squash(t["text"]) for t in reversed(s.transcript) if t["role"] == "agent"), "")
     pool = said + (" " + last_agent if confirmed else "")
     if field == "email":
@@ -350,14 +353,30 @@ def _value_traceable(field: str, value, s: Session, confirmed: bool) -> bool:
     return True
 
 
+_DIGIT_WORDS = {"zero": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+                "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10"}
+_DIGIT_WORD_RE = "|".join(_DIGIT_WORDS)
+
+
+def _words_to_digits(text: str) -> str:
+    """'eight point five' → '8.5', 'nine' → '9', so spelled-out answers still count as grounded."""
+    def point(m: re.Match) -> str:
+        frac = "".join(_DIGIT_WORDS[w] for w in m.group(2).split())
+        return f"{_DIGIT_WORDS[m.group(1)]}.{frac}"
+    text = re.sub(rf"\b({_DIGIT_WORD_RE}) point ((?:(?:{_DIGIT_WORD_RE})\s?)+)\b", point, text)
+    return re.sub(rf"\b({_DIGIT_WORD_RE})\b", lambda m: _DIGIT_WORDS[m.group(1)], text)
+
+
 def parse_date_time(text: str) -> str | None:
+    """'tomorrow 6pm' → '2026-11-15T18:00:00+05:30'. None if there's no recognisable time."""
     if not text:
         return None
-    import dateparser
     dt = dateparser.parse(text, languages=["en", "hi"], settings={
         "PREFER_DATES_FROM": "future", "RELATIVE_BASE": now_ist().replace(tzinfo=None),
         "DATE_ORDER": "DMY"})
     if dt is None:
         d = parse_date(text)
         return d.isoformat() if d else None
-    return dt.replace(microsecond=0).isoformat() + "+05:30"
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=IST)
+    return dt.replace(microsecond=0).isoformat()

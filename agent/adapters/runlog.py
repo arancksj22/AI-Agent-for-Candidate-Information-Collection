@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .config import now_ist
+from agent.config import now_ist
 
 
 class RunLog:

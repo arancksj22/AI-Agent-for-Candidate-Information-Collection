@@ -68,9 +68,32 @@ multi-round function-calling loop):
 writes the reply. Code owns the facts: validation, normalisation, grounding, writes and the final
 status.
 
-**Code map** (`agent/`): `api_client.py` (safe writes), `diagnose.py`, `normalize.py` (per-field
-rules), `extract.py` (pre-checks), `prompts.py` (system prompt and state card), `llm.py` (Gemini),
-`agent.py` (loop and action execution), `policy.py` (status and notes), `chat_io.py`, `runlog.py`.
+**Code map:**
+
+```
+agent/
+  __main__.py            CLI (--candidate-id, --diagnose-all, --reset)
+  config.py              .env settings, IST clock
+  conversation/
+    agent.py             the agent loop: turns, action execution, grounding, finalize
+    session.py           per-chat state (the source of truth for the state card)
+  domain/
+    schema.py            field rules, enums, alias tables
+    diagnose.py          what a record needs before any chat
+    policy.py            deterministic status + notes builder
+  nlp/
+    normalize.py         per-field validators/normalisers (dateparser, rapidfuzz, email-validator)
+    extract.py           pre-checks on each candidate message (hints for the LLM)
+  llm/
+    client.py            Gemini wrapper: JSON output, retries, fallback model
+    prompts.py           system prompt, state card, templates
+  adapters/
+    candidate_api.py     Candidate DB API client (If-Match, Idempotency-Key, retries, 409 rebase)
+    terminal.py          chat I/O with inactivity timeout
+    runlog.py            runs/<id>-<timestamp>.json
+docs/                    assignment brief and design/plan documents
+runs/                    sample transcripts with tool calls and API traffic
+```
 
 ## Decisions
 
@@ -141,4 +164,4 @@ One real Gemini turn was checked: it saved the email, declined to save "85" and 
 
 **Next:** value lifecycle (proposed → confirmed), read-back, resuming from notes, an outbox and DLQ
 for failed writes (SQS + DLQ + a Lambda replayer), and a scripted-persona regression runner. See
-`initial-development.md` Part 2.
+`docs/initial-development.md` Part 2.

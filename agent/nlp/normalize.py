@@ -21,8 +21,8 @@ import dateparser
 from email_validator import EmailNotValidError, validate_email
 from rapidfuzz import fuzz, process
 
-from . import schema
-from .config import now_ist
+from agent.domain import schema
+from agent.config import now_ist
 
 
 @dataclass

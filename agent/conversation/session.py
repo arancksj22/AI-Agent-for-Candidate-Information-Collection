@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .config import now_ist
-from .diagnose import Diagnosis, Issue
+from agent.config import now_ist
+from agent.domain.diagnose import Diagnosis, Issue
 
 
 @dataclass

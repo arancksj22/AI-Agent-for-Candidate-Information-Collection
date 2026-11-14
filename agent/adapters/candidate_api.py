@@ -9,7 +9,7 @@ from typing import Any, Callable
 
 import httpx
 
-from .config import Config
+from agent.config import Config
 
 RETRYABLE = {429, 500, 502, 503, 504}
 

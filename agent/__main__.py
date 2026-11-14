@@ -9,8 +9,8 @@ from __future__ import annotations
 import argparse
 import sys
 
-from .api_client import ApiError, CandidateRepo
-from .config import load_config
+from agent.adapters.candidate_api import ApiError, CandidateRepo
+from agent.config import load_config
 
 
 def main() -> int:
@@ -38,14 +38,14 @@ def main() -> int:
         return 0
 
     if args.diagnose_all:
-        from .diagnose import describe, diagnose
+        from agent.domain.diagnose import describe, diagnose
         for record in CandidateRepo(cfg).list():
             print(describe(record, diagnose(record)))
         return 0
 
-    from .agent import Agent
-    from .chat_io import Terminal
-    from .runlog import RunLog
+    from agent.conversation.agent import Agent
+    from agent.adapters.terminal import Terminal
+    from agent.adapters.runlog import RunLog
 
     log = RunLog(cfg.runs_dir, args.candidate_id)
     repo = CandidateRepo(cfg, log=log)

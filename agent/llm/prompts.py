@@ -1,9 +1,9 @@
 """System prompt, per-turn context (state card) and message templates."""
 from __future__ import annotations
 
-from . import schema
-from .config import now_ist
-from .session import Session
+from agent.domain import schema
+from agent.config import now_ist
+from agent.conversation.session import Session
 
 SYSTEM_PROMPT = f"""You are the recruiting assistant for the ACME Corp internship team, chatting with an
 internship applicant over WhatsApp. Their application form was submitted with some details missing or

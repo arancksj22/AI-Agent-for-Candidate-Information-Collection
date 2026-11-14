@@ -4,10 +4,10 @@ from __future__ import annotations
 import json
 import re
 
-from . import schema
-from .config import now_ist
-from .diagnose import STATE_MARKER, diagnose
-from .session import Session
+from agent.domain import schema
+from agent.config import now_ist
+from agent.domain.diagnose import STATE_MARKER, diagnose
+from agent.conversation.session import Session
 
 
 def compute_status(s: Session) -> str:

@@ -8,7 +8,7 @@ from typing import Callable
 from google import genai
 from google.genai import errors, types
 
-from .config import Config
+from agent.config import Config
 
 RETRYABLE = {429, 500, 502, 503, 504}
 

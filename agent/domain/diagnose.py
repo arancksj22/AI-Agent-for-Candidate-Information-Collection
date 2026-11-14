@@ -5,8 +5,8 @@ import json
 import re
 from dataclasses import dataclass, field
 
-from . import schema
-from .normalize import is_empty, normalize
+from agent.domain import schema
+from agent.nlp.normalize import is_empty, normalize
 
 STATE_MARKER = "---agent-state v1---"
 
@@ -47,7 +47,9 @@ def diagnose(record: dict) -> Diagnosis:
             d.missing.append(f)
             continue
         res = normalize(f, value)
-        if not res.ok:
+        if not res.ok and not res.soft:
+            # Soft failures (a past start date, a likely email typo) are legal values: they're worth
+            # confirming when a candidate gives them, but not worth starting a chat over.
             d.invalid.append(Issue(f, value, res.error, res.suggestion))
         elif f in ("degree", "preferred_location", "internship_duration_months") and res.value != value:
             # Not a valid enum value as stored, even if we can guess what was meant.
