@@ -33,6 +33,8 @@ class Session:
     save_events: int = 0                       # bumps on every applied write (read-back trigger)
     readback_sent: bool = False
     idle_turns: int = 0                        # consecutive turns with no progress
+    hostile_turns: int = 0                     # turns with abusive words + angry sentiment
+    forced_end: str = ""                       # set when code (not the LLM) ends the chat
 
     @property
     def issues(self) -> dict[str, Issue]:

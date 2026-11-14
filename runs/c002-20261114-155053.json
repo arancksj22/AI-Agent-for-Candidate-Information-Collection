@@ -1,0 +1,522 @@
+{
+  "candidate_id": "c002",
+  "started_at": "2026-11-14T15:50:53+05:30",
+  "status": "needs_human",
+  "chat": true,
+  "llm_calls": 7,
+  "end_reason": "Escalated due to frustration and candidate preference for another company.",
+  "saved": {
+    "graduation_year": 2027,
+    "available_from": "2027-04-15",
+    "internship_duration_months": 3
+  },
+  "refused": {},
+  "remaining": [],
+  "gave_up": {},
+  "escalations": [
+    "Candidate expressed frustration and expressed interest in interning at another company."
+  ],
+  "followup": null,
+  "transcript": [
+    {
+      "role": "agent",
+      "text": "Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?",
+      "at": "2026-11-14T15:50:54+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "hello yeah right!",
+      "at": "2026-11-14T15:51:00+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?",
+      "at": "2026-11-14T15:51:03+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "im sure your speaking to me haha",
+      "at": "2026-11-14T15:51:11+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?",
+      "at": "2026-11-14T15:51:13+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "2025 what all details do you have of me already",
+      "at": "2026-11-14T15:51:27+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "On file, we have your name, email (priya.nair@example.com), college (VJTI), degree (B.Tech IT), CGPA (8.7), and preferred location (Remote). For graduation year, our program accepts 2026 to 2028—could you confirm if you're graduating in 2026 or later? Also, let me know your preferred start date and internship duration (2, 3, or 6 months).",
+      "at": "2026-11-14T15:51:31+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "ummm 2027, i like 3 months haha no 2 months no no 6 hahaha idk six,three, 2 okaky lets do teen, what else pandra april",
+      "at": "2026-11-14T15:52:16+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Just to be clear, are you graduating in 2027, available from 15th April 2027, and looking for a 3-month internship?",
+      "at": "2026-11-14T15:52:21+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes works i wanna intern at another comapny not yours will you help",
+      "at": "2026-11-14T15:52:43+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thanks for confirming all the details! I've noted down your question regarding interning at another company and passed it to our team.",
+      "at": "2026-11-14T15:52:50+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Quick check, here's what I've noted: graduating in 2027, starting 15 Apr 2027, 3 months internship. Is that all correct?",
+      "at": "2026-11-14T15:52:50+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "i hate htis ughs i wanna do another company",
+      "at": "2026-11-14T15:53:33+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "I'm sorry for any frustration! I've informed our team, and someone will follow up with you directly.",
+      "at": "2026-11-14T15:53:37+05:30"
+    }
+  ],
+  "final_record": {
+    "id": "c002",
+    "full_name": "Priya Nair",
+    "email": "priya.nair@example.com",
+    "college": "VJTI, Mumbai",
+    "degree": "B.Tech",
+    "branch": "Information Technology",
+    "graduation_year": 2027,
+    "cgpa": 8.7,
+    "preferred_location": "Remote",
+    "available_from": "2027-04-15",
+    "internship_duration_months": 3,
+    "linkedin_url": null,
+    "github_url": null,
+    "skills": [
+      "Java",
+      "Spring Boot"
+    ],
+    "phone": "+915887783493",
+    "collection_status": "needs_human",
+    "attempt_count": 1,
+    "last_contacted_at": "2026-11-14T15:53:37+05:30",
+    "notes": "[2026-11-14 15:53 IST] Agent chat → needs_human. Collected: graduation_year=2027, available_from=2027-04-15, internship_duration_months=3. Needs human: Candidate expressed frustration and expressed interest in interning at another company.. End reason: Escalated due to frustration and candidate preference for another company.. For the team: Candidate mentioned wanting to intern at another company instead of ACME and asked for help..\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+    "version": 3,
+    "updated_at": "2026-11-14T10:23:38+00:00"
+  },
+  "events": [
+    {
+      "at": "2026-11-14T15:50:53+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:50:54+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": null,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 1,
+        "updated_at": "2026-11-14T10:06:35+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:50:54+05:30",
+      "kind": "diagnosis",
+      "missing": [
+        "graduation_year",
+        "available_from",
+        "internship_duration_months"
+      ],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": null
+    },
+    {
+      "at": "2026-11-14T15:51:03+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:51:03+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: unknown | today: Saturday 2026-11-14 15:51 IST\nSaved this chat: nothing yet\nStill needed: graduation_year (graduation year), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nTurn 1 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?\nCandidate: hello yeah right!\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nsignal: message looks like a joke/sarcasm (lol, jk, 🙄...): don't save values from it unless they confirm the real value; code will require candidate_confirmed=true\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?"
+      },
+      "seconds": 2.31,
+      "usage": {
+        "prompt": 2651,
+        "output": 78,
+        "thinking": 103
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:51:13+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:51:13+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: confirmed | today: Saturday 2026-11-14 15:51 IST\nSaved this chat: nothing yet\nStill needed: graduation_year (graduation year), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nTurn 2 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?\nCandidate: hello yeah right!\nYou: Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?\nCandidate: im sure your speaking to me haha\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nsignal: message looks like a joke/sarcasm (lol, jk, 🙄...): don't save values from it unless they confirm the real value; code will require candidate_confirmed=true\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?"
+      },
+      "seconds": 2.05,
+      "usage": {
+        "prompt": 2710,
+        "output": 72,
+        "thinking": 62
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:51:28+05:30",
+      "kind": "llm_error",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "code": 429,
+      "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    },
+    {
+      "at": "2026-11-14T15:51:30+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:51:31+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: confirmed | today: Saturday 2026-11-14 15:51 IST\nSaved this chat: nothing yet\nStill needed: graduation_year (graduation year), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nTurn 3 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?\nCandidate: hello yeah right!\nYou: Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?\nCandidate: im sure your speaking to me haha\nYou: Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?\nCandidate: 2025 what all details do you have of me already\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nyear '2025': if this is the graduation year → NOT valid as graduation_year: 2025 is outside the accepted range 2026-2028. Do not save it. Confirm the year with the candidate; if they insist it's 2025, escalate to a human.\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "On file, we have your name, email (priya.nair@example.com), college (VJTI), degree (B.Tech IT), CGPA (8.7), and preferred location (Remote). For graduation year, our program accepts 2026 to 2028—could you confirm if you're graduating in 2026 or later? Also, let me know your preferred start date and internship duration (2, 3, or 6 months)."
+      },
+      "seconds": 2.87,
+      "usage": {
+        "prompt": 2799,
+        "output": 135,
+        "thinking": null
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:52:20+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:52:21+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: confirmed | today: Saturday 2026-11-14 15:52 IST\nSaved this chat: nothing yet\nStill needed: graduation_year (graduation year), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nTurn 4 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?\nCandidate: hello yeah right!\nYou: Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?\nCandidate: im sure your speaking to me haha\nYou: Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?\nCandidate: 2025 what all details do you have of me already\nYou: On file, we have your name, email (priya.nair@example.com), college (VJTI), degree (B.Tech IT), CGPA (8.7), and preferred location (Remote). For graduation year, our program accepts 2026 to 2028—could you confirm if you're graduating in 2026 or later? Also, let me know your preferred start date and internship duration (2, 3, or 6 months).\nCandidate: ummm 2027, i like 3 months haha no 2 months no no 6 hahaha idk six,three, 2 okaky lets do teen, what else pandra april\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nyear '2027': if this is the graduation year → valid graduation_year=2027\nduration '3 months': valid internship_duration_months=3\nduration '2 months': valid internship_duration_months=2\nsignal: message looks like a joke/sarcasm (lol, jk, 🙄...): don't save values from it unless they confirm the real value; code will require candidate_confirmed=true\nsignal: candidate doesn't know / needs to check: don't press; offer to skip it for now or to continue later\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Just to be clear, are you graduating in 2027, available from 15th April 2027, and looking for a 3-month internship?"
+      },
+      "seconds": 4.44,
+      "usage": {
+        "prompt": 3001,
+        "output": 69,
+        "thinking": 392
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:52:49+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "graduation_year",
+          "value": "2027",
+          "evidence": "2027",
+          "candidate_confirmed": true
+        },
+        {
+          "type": "save",
+          "field": "available_from",
+          "value": "2027-04-15",
+          "evidence": "pandra april",
+          "candidate_confirmed": true
+        },
+        {
+          "type": "save",
+          "field": "internship_duration_months",
+          "value": "3",
+          "evidence": "teen",
+          "candidate_confirmed": true
+        },
+        {
+          "type": "note",
+          "text": "Candidate mentioned wanting to intern at another company instead of ACME and asked for help."
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:52:49+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "headers": {
+        "If-Match": "\"1\"",
+        "Idempotency-Key": "9302a4fb4dfd2afcf19d9529532731d6",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "graduation_year": 2027,
+        "available_from": "2027-04-15",
+        "internship_duration_months": 3
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:52:50+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": 2027,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": "2027-04-15",
+        "internship_duration_months": 3,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 2,
+        "updated_at": "2026-11-14T10:22:50+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:52:50+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: confirmed | today: Saturday 2026-11-14 15:52 IST\nSaved this chat: nothing yet\nStill needed: graduation_year (graduation year), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nNo progress for 3 turns: offer to continue another time.\nTurn 5 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Priya Nair?\nCandidate: hello yeah right!\nYou: Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?\nCandidate: im sure your speaking to me haha\nYou: Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?\nCandidate: 2025 what all details do you have of me already\nYou: On file, we have your name, email (priya.nair@example.com), college (VJTI), degree (B.Tech IT), CGPA (8.7), and preferred location (Remote). For graduation year, our program accepts 2026 to 2028—could you confirm if you're graduating in 2026 or later? Also, let me know your preferred start date and internship duration (2, 3, or 6 months).\nCandidate: ummm 2027, i like 3 months haha no 2 months no no 6 hahaha idk six,three, 2 okaky lets do teen, what else pandra april\nYou: Just to be clear, are you graduating in 2027, available from 15th April 2027, and looking for a 3-month internship?\nCandidate: yes works i wanna intern at another comapny not yours will you help\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "graduation_year",
+            "value": "2027",
+            "evidence": "2027",
+            "candidate_confirmed": true
+          },
+          {
+            "type": "save",
+            "field": "available_from",
+            "value": "2027-04-15",
+            "evidence": "pandra april",
+            "candidate_confirmed": true
+          },
+          {
+            "type": "save",
+            "field": "internship_duration_months",
+            "value": "3",
+            "evidence": "teen",
+            "candidate_confirmed": true
+          },
+          {
+            "type": "note",
+            "text": "Candidate mentioned wanting to intern at another company instead of ACME and asked for help."
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Thanks for confirming all the details! I've noted down your question regarding interning at another company and passed it to our team."
+      },
+      "seconds": 7.61,
+      "usage": {
+        "prompt": 2953,
+        "output": 262,
+        "thinking": 754
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:53:37+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "frustrated",
+      "actions": [
+        {
+          "type": "escalate",
+          "text": "Candidate expressed frustration and expressed interest in interning at another company."
+        },
+        {
+          "type": "end",
+          "text": "Escalated due to frustration and candidate preference for another company."
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:53:37+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Priya Nair | identity: confirmed | today: Saturday 2026-11-14 15:53 IST\nSaved this chat: graduation_year=2027, available_from=2027-04-15, internship_duration_months=3\nStill needed: NOTHING (wrap up)\nRefused: none\nREAD-BACK SENT: the summary is waiting for the candidate's confirmation.\nTurn 6 of 30\nAlready on file (don't ask again): full_name=Priya Nair, email=priya.nair@example.com, college=VJTI, Mumbai, degree=B.Tech, branch=Information Technology, cgpa=8.7, preferred_location=Remote\n\nCONVERSATION (most recent last)\nCandidate: hello yeah right!\nYou: Awesome! Thanks for confirming, Priya. To help us process your application, could you share your expected graduation year, available start date, and how many months you can intern for (2, 3, or 6 months)?\nCandidate: im sure your speaking to me haha\nYou: Haha great! Whenever you're ready, could you let me know your expected graduation year, when you can start, and your preferred internship duration (2, 3, or 6 months)?\nCandidate: 2025 what all details do you have of me already\nYou: On file, we have your name, email (priya.nair@example.com), college (VJTI), degree (B.Tech IT), CGPA (8.7), and preferred location (Remote). For graduation year, our program accepts 2026 to 2028—could you confirm if you're graduating in 2026 or later? Also, let me know your preferred start date and internship duration (2, 3, or 6 months).\nCandidate: ummm 2027, i like 3 months haha no 2 months no no 6 hahaha idk six,three, 2 okaky lets do teen, what else pandra april\nYou: Just to be clear, are you graduating in 2027, available from 15th April 2027, and looking for a 3-month internship?\nCandidate: yes works i wanna intern at another comapny not yours will you help\nYou: Thanks for confirming all the details! I've noted down your question regarding interning at another company and passed it to our team.\nYou: Quick check, here's what I've noted: graduating in 2027, starting 15 Apr 2027, 3 months internship. Is that all correct?\nCandidate: i hate htis ughs i wanna do another company\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave graduation_year=2027: saved\nsave available_from='2027-04-15': saved\nsave internship_duration_months=3: saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "escalate",
+            "text": "Candidate expressed frustration and expressed interest in interning at another company."
+          },
+          {
+            "type": "end",
+            "text": "Escalated due to frustration and candidate preference for another company."
+          }
+        ],
+        "sentiment": "frustrated",
+        "reply": "I'm sorry for any frustration! I've informed our team, and someone will follow up with you directly."
+      },
+      "seconds": 3.92,
+      "usage": {
+        "prompt": 3073,
+        "output": 126,
+        "thinking": 299
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:53:37+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "headers": {
+        "If-Match": "\"2\"",
+        "Idempotency-Key": "e2c30c2ab88ecbb9431658e43032f1b2",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "collection_status": "needs_human",
+        "last_contacted_at": "2026-11-14T15:53:37+05:30",
+        "attempt_count": 1,
+        "notes": "[2026-11-14 15:53 IST] Agent chat → needs_human. Collected: graduation_year=2027, available_from=2027-04-15, internship_duration_months=3. Needs human: Candidate expressed frustration and expressed interest in interning at another company.. End reason: Escalated due to frustration and candidate preference for another company.. For the team: Candidate mentioned wanting to intern at another company instead of ACME and asked for help..\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:53:38+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c002",
+      "status": 200,
+      "body": {
+        "id": "c002",
+        "full_name": "Priya Nair",
+        "email": "priya.nair@example.com",
+        "college": "VJTI, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Information Technology",
+        "graduation_year": 2027,
+        "cgpa": 8.7,
+        "preferred_location": "Remote",
+        "available_from": "2027-04-15",
+        "internship_duration_months": 3,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": [
+          "Java",
+          "Spring Boot"
+        ],
+        "phone": "+915887783493",
+        "collection_status": "needs_human",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:53:37+05:30",
+        "notes": "[2026-11-14 15:53 IST] Agent chat → needs_human. Collected: graduation_year=2027, available_from=2027-04-15, internship_duration_months=3. Needs human: Candidate expressed frustration and expressed interest in interning at another company.. End reason: Escalated due to frustration and candidate preference for another company.. For the team: Candidate mentioned wanting to intern at another company instead of ACME and asked for help..\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"needs_human\"}",
+        "version": 3,
+        "updated_at": "2026-11-14T10:23:38+00:00"
+      }
+    }
+  ]
+}

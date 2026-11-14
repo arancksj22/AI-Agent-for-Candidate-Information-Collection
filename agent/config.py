@@ -54,8 +54,8 @@ def load_config() -> Config:
         # A different model has its own free-tier quota, so it's a real fallback.
         gemini_fallback_model=os.environ.get("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash-lite").strip(),
         gemini_thinking_budget=int(os.environ.get("GEMINI_THINKING_BUDGET", "512")),
-        nudge_after_s=float(os.environ.get("NUDGE_AFTER_SECONDS", "60")),
-        give_up_after_s=float(os.environ.get("GIVE_UP_AFTER_SECONDS", "120")),
+        nudge_after_s=float(os.environ.get("NUDGE_AFTER_SECONDS", "180")),
+        give_up_after_s=float(os.environ.get("GIVE_UP_AFTER_SECONDS", "360")),
         max_turns=int(os.environ.get("MAX_TURNS", "30")),
         runs_dir=ROOT / "runs",
         state_dir=ROOT / "state",

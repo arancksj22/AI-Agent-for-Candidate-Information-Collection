@@ -1,0 +1,663 @@
+{
+  "candidate_id": "c007",
+  "started_at": "2026-11-14T15:39:49+05:30",
+  "status": "in_progress",
+  "chat": true,
+  "llm_calls": 8,
+  "end_reason": "no reply (timed out)",
+  "saved": {
+    "college": "SPIT",
+    "degree": "MCA",
+    "branch": "Computer Engineering",
+    "cgpa": 9.0
+  },
+  "refused": {},
+  "remaining": [
+    "graduation_year",
+    "preferred_location",
+    "available_from",
+    "internship_duration_months"
+  ],
+  "gave_up": {},
+  "escalations": [],
+  "followup": {
+    "text": "later (no time given)",
+    "iso": null
+  },
+  "transcript": [
+    {
+      "role": "agent",
+      "text": "Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?",
+      "at": "2026-11-14T15:39:51+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "hhello boss what do you have of mera and what do you need baba",
+      "at": "2026-11-14T15:40:02+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?",
+      "at": "2026-11-14T15:40:06+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes i am baba",
+      "at": "2026-11-14T15:40:12+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?",
+      "at": "2026-11-14T15:40:14+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Are you still there? No rush, reply whenever you're ready.",
+      "at": "2026-11-14T15:41:15+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine",
+      "at": "2026-11-14T15:41:16+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?",
+      "at": "2026-11-14T15:41:21+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine",
+      "at": "2026-11-14T15:41:21+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?",
+      "at": "2026-11-14T15:41:24+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Are you still there? No rush, reply whenever you're ready.",
+      "at": "2026-11-14T15:42:25+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents thats how much im avaiable, rest is your prob\\",
+      "at": "2026-11-14T15:42:26+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Just to be clear, should I set your preferred location to Remote? Also, could you confirm your expected graduation year and the exact month or year you can start the internship?",
+      "at": "2026-11-14T15:42:28+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?",
+      "at": "2026-11-14T15:42:37+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "It looks like your last message copied my previous text! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and when you'd be available to start?",
+      "at": "2026-11-14T15:42:40+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "You: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents t",
+      "at": "2026-11-14T15:42:40+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "It looks like your message got cut off or repeated! Would you like to take a break and continue this chat later, or are you ready to share your graduation year and available start date now?",
+      "at": "2026-11-14T15:42:44+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "hats how much im avaiable, rest is your probkem",
+      "at": "2026-11-14T15:42:44+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "It seems like now might not be the best time to complete your details. Would you like to pause and continue this another time?",
+      "at": "2026-11-14T15:42:50+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Are you still there? No rush, reply whenever you're ready.",
+      "at": "2026-11-14T15:43:50+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Looks like now isn't a good time. No worries, we'll reach out again later. Thanks!",
+      "at": "2026-11-14T15:44:50+05:30"
+    }
+  ],
+  "final_record": {
+    "id": "c007",
+    "full_name": "Vikram Rao",
+    "email": "vikram@gmail.com",
+    "college": "SPIT",
+    "degree": "MCA",
+    "branch": "Computer Engineering",
+    "graduation_year": null,
+    "cgpa": 9.0,
+    "preferred_location": null,
+    "available_from": null,
+    "internship_duration_months": null,
+    "linkedin_url": null,
+    "github_url": null,
+    "skills": null,
+    "phone": "+915232488646",
+    "collection_status": "in_progress",
+    "attempt_count": 2,
+    "last_contacted_at": "2026-11-14T15:44:50+05:30",
+    "notes": "[2026-11-14 15:44 IST] Agent chat → in_progress. Collected: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0. Still needed: graduation_year, preferred_location, available_from, internship_duration_months. Candidate asked to continue later: \"later (no time given)\". End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"in_progress\"}\n\n--- earlier ---\n[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow.",
+    "version": 6,
+    "updated_at": "2026-11-14T10:14:51+00:00"
+  },
+  "events": [
+    {
+      "at": "2026-11-14T15:39:49+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c007",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:39:51+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": null,
+        "degree": null,
+        "branch": null,
+        "graduation_year": null,
+        "cgpa": null,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "in_progress",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:39:34+05:30",
+        "notes": "[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow.\n---agent-state v1---\n{\"remaining\":[\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":\"2026-11-15T15:39:34+05:30\",\"status\":\"in_progress\"}",
+        "version": 3,
+        "updated_at": "2026-11-14T10:09:35+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:39:51+05:30",
+      "kind": "diagnosis",
+      "missing": [
+        "college",
+        "degree",
+        "branch",
+        "graduation_year",
+        "cgpa",
+        "preferred_location",
+        "available_from",
+        "internship_duration_months"
+      ],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": {
+        "remaining": [
+          "college",
+          "degree",
+          "branch",
+          "graduation_year",
+          "preferred_location",
+          "available_from",
+          "internship_duration_months",
+          "cgpa"
+        ],
+        "refused": [],
+        "unresolved": [],
+        "callback": "2026-11-15T15:39:34+05:30",
+        "status": "in_progress"
+      }
+    },
+    {
+      "at": "2026-11-14T15:40:06+05:30",
+      "kind": "actions",
+      "identity": "unknown",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:40:06+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: unknown | today: Saturday 2026-11-14 15:40 IST\nSaved this chat: nothing yet\nStill needed: college (college name), degree (degree), branch (branch / specialisation), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 1 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: hhello boss what do you have of mera and what do you need baba\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "unknown",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?"
+      },
+      "seconds": 2.97,
+      "usage": {
+        "prompt": 2401,
+        "output": 62,
+        "thinking": 212
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:40:14+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:40:14+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: unknown | today: Saturday 2026-11-14 15:40 IST\nSaved this chat: nothing yet\nStill needed: college (college name), degree (degree), branch (branch / specialisation), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 2 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: hhello boss what do you have of mera and what do you need baba\nYou: I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?\nCandidate: yes i am baba\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?"
+      },
+      "seconds": 2.47,
+      "usage": {
+        "prompt": 2442,
+        "output": 71,
+        "thinking": 175
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:41:20+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "college",
+          "value": "SPIT",
+          "evidence": "spit",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "degree",
+          "value": "MCA",
+          "evidence": "mca",
+          "candidate_confirmed": false
+        },
+        {
+          "type": "save",
+          "field": "branch",
+          "value": "Computer Engineering",
+          "evidence": "comp engg",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:41:20+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"3\"",
+        "Idempotency-Key": "349b5cbac714d4c76cd4f08b4da7bae5",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "college": "SPIT",
+        "degree": "MCA",
+        "branch": "Computer Engineering"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:41:21+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "SPIT",
+        "degree": "MCA",
+        "branch": "Computer Engineering",
+        "graduation_year": null,
+        "cgpa": null,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "in_progress",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:39:34+05:30",
+        "notes": "[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow.\n---agent-state v1---\n{\"remaining\":[\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":\"2026-11-15T15:39:34+05:30\",\"status\":\"in_progress\"}",
+        "version": 4,
+        "updated_at": "2026-11-14T10:11:21+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:41:21+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:41 IST\nSaved this chat: nothing yet\nStill needed: college (college name), degree (degree), branch (branch / specialisation), graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 3 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: hhello boss what do you have of mera and what do you need baba\nYou: I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?\nCandidate: yes i am baba\nYou: Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\ndegree mention 'mca' → degree could be 'MCA'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "college",
+            "value": "SPIT",
+            "evidence": "spit",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "degree",
+            "value": "MCA",
+            "evidence": "mca",
+            "candidate_confirmed": false
+          },
+          {
+            "type": "save",
+            "field": "branch",
+            "value": "Computer Engineering",
+            "evidence": "comp engg",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?"
+      },
+      "seconds": 4.89,
+      "usage": {
+        "prompt": 2540,
+        "output": 214,
+        "thinking": 282
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:41:24+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "cgpa",
+          "value": "9.0",
+          "evidence": "my cgpa nine",
+          "candidate_confirmed": true
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:41:24+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"4\"",
+        "Idempotency-Key": "333a183a701bff2dbf039bdd1579e57b",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "cgpa": 9.0
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:41:24+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "SPIT",
+        "degree": "MCA",
+        "branch": "Computer Engineering",
+        "graduation_year": null,
+        "cgpa": 9.0,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "in_progress",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T15:39:34+05:30",
+        "notes": "[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow.\n---agent-state v1---\n{\"remaining\":[\"college\",\"degree\",\"branch\",\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\",\"cgpa\"],\"refused\":[],\"unresolved\":[],\"callback\":\"2026-11-15T15:39:34+05:30\",\"status\":\"in_progress\"}",
+        "version": 5,
+        "updated_at": "2026-11-14T10:11:24+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T15:41:24+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:41 IST\nSaved this chat: college=SPIT, degree=MCA, branch=Computer Engineering\nStill needed: graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration), cgpa (CGPA (10-point scale))\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 4 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: hhello boss what do you have of mera and what do you need baba\nYou: I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?\nCandidate: yes i am baba\nYou: Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave college='SPIT': saved\nsave degree='MCA': saved\nsave branch='Computer Engineering': saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\ndegree mention 'mca' → degree could be 'MCA'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "cgpa",
+            "value": "9.0",
+            "evidence": "my cgpa nine",
+            "candidate_confirmed": true
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?"
+      },
+      "seconds": 3.54,
+      "usage": {
+        "prompt": 2629,
+        "output": 143,
+        "thinking": 235
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:42:28+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:42:28+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:42 IST\nSaved this chat: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0\nStill needed: graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 5 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Hi again! This is the ACME Corp internship team. We spoke earlier about your internship application and I just have a few things left. Am I speaking with Vikram Rao?\nCandidate: hhello boss what do you have of mera and what do you need baba\nYou: I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?\nCandidate: yes i am baba\nYou: Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents thats how much im avaiable, rest is your prob\\\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave cgpa=9.0: saved\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nlocation mention 'rmote' → preferred_location could be 'Remote'\ndegree mention 'btech' → degree could be 'B.Tech'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Just to be clear, should I set your preferred location to Remote? Also, could you confirm your expected graduation year and the exact month or year you can start the internship?"
+      },
+      "seconds": 2.2,
+      "usage": {
+        "prompt": 2754,
+        "output": 66,
+        "thinking": null
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:42:40+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:42:40+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:42 IST\nSaved this chat: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0\nStill needed: graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 6 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: I'm the ACME Corp internship assistant! Before I can share what details we have on file, could you please confirm if you are Vikram Rao?\nCandidate: yes i am baba\nYou: Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents thats how much im avaiable, rest is your prob\\\nYou: Just to be clear, should I set your preferred location to Remote? Also, could you confirm your expected graduation year and the exact month or year you can start the internship?\nCandidate: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnumber '9.0': if this is the CGPA → valid cgpa=9.0\nlocation mention 'mumbai' → preferred_location could be 'Mumbai'\nlocation mention 'bengaluru' → preferred_location could be 'Bengaluru'\nlocation mention 'remote' → preferred_location could be 'Remote'\nlocation mention 'preference' → preferred_location could be 'No preference'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "It looks like your last message copied my previous text! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and when you'd be available to start?"
+      },
+      "seconds": 2.84,
+      "usage": {
+        "prompt": 2834,
+        "output": 74,
+        "thinking": 163
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:42:44+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T15:42:44+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:42 IST\nSaved this chat: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0\nStill needed: graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nTurn 7 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nYou: Thanks for confirming, Vikram! On file we have your email (vikram@gmail.com). To move forward with your application, could you tell me your college name, degree, and branch?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents thats how much im avaiable, rest is your prob\\\nYou: Just to be clear, should I set your preferred location to Remote? Also, could you confirm your expected graduation year and the exact month or year you can start the internship?\nCandidate: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: It looks like your last message copied my previous text! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and when you'd be available to start?\nCandidate: You: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents t\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nlocation mention 'rmote' → preferred_location could be 'Remote'\ndegree mention 'btech' → degree could be 'B.Tech'\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "It looks like your message got cut off or repeated! Would you like to take a break and continue this chat later, or are you ready to share your graduation year and available start date now?"
+      },
+      "seconds": 3.83,
+      "usage": {
+        "prompt": 2821,
+        "output": 70,
+        "thinking": 349
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:42:50+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "followup",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T15:42:50+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Vikram Rao | identity: confirmed | today: Saturday 2026-11-14 15:42 IST\nSaved this chat: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0\nStill needed: graduation_year (graduation year), preferred_location (preferred location), available_from (date they can start), internship_duration_months (internship duration)\nRefused: none\nPREVIOUS CONVERSATION: ended in_progress; they asked to continue around 2026-11-15T15:39:34+05:30\nNo progress for 3 turns: offer to continue another time.\nTurn 8 of 30\nAlready on file (don't ask again): full_name=Vikram Rao, email=vikram@gmail.com\n\nCONVERSATION (most recent last)\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Got it, saved SPIT, MCA in Computer Engineering! Is your CGPA 9.0 out of 10? Also, could you share your expected graduation year?\nCandidate: yesyes my clhg is spit, comp engg, mca now what esle my cgpa nine\nYou: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: Are you still there? No rush, reply whenever you're ready.\nCandidate: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents thats how much im avaiable, rest is your prob\\\nYou: Just to be clear, should I set your preferred location to Remote? Also, could you confirm your expected graduation year and the exact month or year you can start the internship?\nCandidate: Awesome, I've noted your CGPA as 9.0! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and how many months (2, 3, or 6) you're available for?\nYou: It looks like your last message copied my previous text! Could you please share your expected graduation year, preferred location (Mumbai, Bengaluru, Remote, or No preference), and when you'd be available to start?\nCandidate: You: yesyes ahhahahaha im avabile rmote other than tha tyou tell me ahaha what is the avg btech 4th year requirents t\nYou: It looks like your message got cut off or repeated! Would you like to take a break and continue this chat later, or are you ready to share your graduation year and available start date now?\nCandidate: hats how much im avaiable, rest is your probkem\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "followup",
+            "text": ""
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "It seems like now might not be the best time to complete your details. Would you like to pause and continue this another time?"
+      },
+      "seconds": 6.03,
+      "usage": {
+        "prompt": 2802,
+        "output": 81,
+        "thinking": 573
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T15:44:50+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "headers": {
+        "If-Match": "\"5\"",
+        "Idempotency-Key": "f822b3faa2ae7e0999d0295b67b8241f",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "last_contacted_at": "2026-11-14T15:44:50+05:30",
+        "attempt_count": 2,
+        "notes": "[2026-11-14 15:44 IST] Agent chat → in_progress. Collected: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0. Still needed: graduation_year, preferred_location, available_from, internship_duration_months. Candidate asked to continue later: \"later (no time given)\". End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"in_progress\"}\n\n--- earlier ---\n[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow."
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T15:44:51+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c007",
+      "status": 200,
+      "body": {
+        "id": "c007",
+        "full_name": "Vikram Rao",
+        "email": "vikram@gmail.com",
+        "college": "SPIT",
+        "degree": "MCA",
+        "branch": "Computer Engineering",
+        "graduation_year": null,
+        "cgpa": 9.0,
+        "preferred_location": null,
+        "available_from": null,
+        "internship_duration_months": null,
+        "linkedin_url": null,
+        "github_url": null,
+        "skills": null,
+        "phone": "+915232488646",
+        "collection_status": "in_progress",
+        "attempt_count": 2,
+        "last_contacted_at": "2026-11-14T15:44:50+05:30",
+        "notes": "[2026-11-14 15:44 IST] Agent chat → in_progress. Collected: college=SPIT, degree=MCA, branch=Computer Engineering, cgpa=9.0. Still needed: graduation_year, preferred_location, available_from, internship_duration_months. Candidate asked to continue later: \"later (no time given)\". End reason: no reply (timed out).\n---agent-state v1---\n{\"remaining\":[\"graduation_year\",\"preferred_location\",\"available_from\",\"internship_duration_months\"],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"in_progress\"}\n\n--- earlier ---\n[2026-11-14 15:39 IST] Agent chat → in_progress. Collected: email=vikram@gmail.com. Still needed: college, degree, branch, graduation_year, preferred_location, available_from, internship_duration_months, cgpa. Candidate asked to continue later: \"tomorrow\" (≈ 2026-11-15T15:39:34+05:30). End reason: Candidate requested to continue tomorrow.",
+        "version": 6,
+        "updated_at": "2026-11-14T10:14:51+00:00"
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import json
 import threading
 import time
@@ -150,6 +151,8 @@ class CandidateRepo:
             headers = {"If-Match": f'"{current["version"]}"', "Idempotency-Key": key,
                        "Content-Type": "application/json"}
             try:
+                if os.environ.get("SIMULATE_WRITE_FAILURE") == "1":   # demo/test switch: API "down" for writes
+                    raise ApiError(None, "simulated outage (SIMULATE_WRITE_FAILURE=1)")
                 resp = self._request("PATCH", f"/v1/candidates/{current['id']}", body=body, headers=headers)
             except ApiError as e:
                 if self.outbox:

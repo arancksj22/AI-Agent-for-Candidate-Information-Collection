@@ -17,6 +17,7 @@ from agent.domain.diagnose import diagnose
 from agent.domain.policy import build_notes, compute_status
 from agent.llm import prompts
 from agent.llm.client import LLM, LLMStreamBroken, LLMUnavailable
+from agent.nlp import signals
 from agent.nlp.extract import extract_hints
 from agent.nlp.normalize import normalize, parse_date
 
@@ -29,6 +30,7 @@ class Agent:
         self.cfg, self.repo, self.term, self.log = cfg, repo, term, log
         self._llm: LLM | None = None
         self.last_results: list[str] = []
+        self.flags: dict[str, bool] = {}
 
     @property
     def llm(self) -> LLM:
@@ -115,6 +117,9 @@ class Agent:
                 return
             if not msg.strip():
                 continue
+            msg = msg[:signals.MAX_MESSAGE_CHARS * 2]          # flags see the length; the LLM gets the cut
+            self.flags = signals.detect(msg, s.candidate_messages)
+            msg = msg[:signals.MAX_MESSAGE_CHARS]
             s.add("candidate", msg.strip())
             s.turns += 1
             if s.turns > self.cfg.max_turns:
@@ -145,7 +150,7 @@ class Agent:
         before = s.progress_signature()
         saves_before = s.save_events
 
-        hints = extract_hints(msg)
+        hints = extract_hints(msg) + signals.hints(self.flags)
         prompt = prompts.turn_prompt(s, hints, self.last_results, self.cfg.max_turns)
         try:
             out, executed, streamed = self._streamed_turn(s, prompt)
@@ -227,6 +232,9 @@ class Agent:
         return out, executed, None
 
     def _after_reply(self, s: Session, should_end: bool, saves_before: int) -> bool:
+        if s.forced_end:
+            self._say(s, prompts.ESCALATE_BYE)
+            return True
         if should_end and (s.escalations or s.identity == "denied" or s.refused or s.followup
                            or s.remaining or s.gave_up or s.readback_sent):
             return True
@@ -249,6 +257,15 @@ class Agent:
         actions = out.get("actions") or []
         self.log("actions", {"identity": out.get("identity"), "sentiment": out.get("sentiment"),
                              "actions": actions})
+
+        if self.flags.get("abuse") and out.get("sentiment") == "angry":
+            s.hostile_turns += 1
+        if s.hostile_turns >= 2 and not any(a.get("type") == "end" for a in actions):
+            # The LLM keeps engaging with an abusive chat: code ends it with a human hand-off.
+            s.forced_end = "repeated abusive messages"
+            s.escalations.append("candidate was abusive more than once; a person should follow up")
+            self.term.info("abusive twice → escalating and ending (code rule)")
+            actions = [a for a in actions if a.get("type") != "save"] + [{"type": "end"}]
 
         identity = out.get("identity", "unknown")
         if identity == "denied" and s.identity != "denied":
@@ -334,6 +351,10 @@ class Agent:
         if not guards.grounded(evidence, s.candidate_messages):
             return False, None, ("The evidence isn't the candidate's words. Only save what the candidate actually "
                                  "said; ask them directly.")
+        if self.flags.get("joking") and not confirmed and evidence and \
+                guards.squash(evidence) in guards.squash(s.candidate_messages[-1]):
+            return False, None, ("CONFIRM: that message looked like a joke or sarcasm. Ask lightly for the real "
+                                 "value and save it with candidate_confirmed=true once they confirm.")
         if guards.is_hedged(field, evidence) and not confirmed:
             return False, None, (f"CONFIRM: the candidate hedged ({evidence!r}). Restate one exact value and ask "
                                  f"them to confirm it; save it with candidate_confirmed=true once they say yes.")
