@@ -1,0 +1,406 @@
+{
+  "candidate_id": "c001",
+  "started_at": "2026-11-14T16:14:47+05:30",
+  "status": "completed",
+  "chat": true,
+  "llm_calls": 5,
+  "end_reason": "candidate confirmed the summary",
+  "saved": {
+    "email": "arav@hotmail.com",
+    "cgpa": 3.9
+  },
+  "refused": {},
+  "remaining": [],
+  "gave_up": {},
+  "escalations": [],
+  "followup": null,
+  "transcript": [
+    {
+      "role": "agent",
+      "text": "Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Aarav Mehta?",
+      "at": "2026-11-14T16:14:49+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "hello yes",
+      "at": "2026-11-14T16:14:51+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Great, thanks Aarav! Could you please share your email address and your CGPA out of 10 to complete your application?",
+      "at": "2026-11-14T16:15:00+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yesyes cgpa 3,9 arav @ hotmail",
+      "at": "2026-11-14T16:15:30+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thanks! Just to confirm, is your email address arav@hotmail.com? Also, is your CGPA of 3.9 on a 10-point scale?",
+      "at": "2026-11-14T16:15:34+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes it is yes it is",
+      "at": "2026-11-14T16:15:46+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Thank you for confirming! I've updated your email and CGPA.",
+      "at": "2026-11-14T16:15:49+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Quick check, here's what I've noted: email arav@hotmail.com, CGPA 3.9. Is that all correct?",
+      "at": "2026-11-14T16:15:49+05:30"
+    },
+    {
+      "role": "candidate",
+      "text": "yes",
+      "at": "2026-11-14T16:15:53+05:30"
+    },
+    {
+      "role": "agent",
+      "text": "Great, your application is all set. Thanks for your time, the team will be in touch!",
+      "at": "2026-11-14T16:15:53+05:30"
+    }
+  ],
+  "final_record": {
+    "id": "c001",
+    "full_name": "Aarav Mehta",
+    "email": "arav@hotmail.com",
+    "college": "NMIMS MPSTME, Mumbai",
+    "degree": "B.Tech",
+    "branch": "Computer Engineering",
+    "graduation_year": 2027,
+    "cgpa": 3.9,
+    "preferred_location": "Mumbai",
+    "available_from": "2027-01-04",
+    "internship_duration_months": 6,
+    "linkedin_url": "https://www.linkedin.com/in/aarav-mehta-example",
+    "github_url": null,
+    "skills": [
+      "Python",
+      "SQL"
+    ],
+    "phone": "+915900909289",
+    "collection_status": "completed",
+    "attempt_count": 1,
+    "last_contacted_at": "2026-11-14T16:15:53+05:30",
+    "notes": "[2026-11-14 16:15 IST] Agent chat → completed. Collected: email=arav@hotmail.com, cgpa=3.9. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}",
+    "version": 3,
+    "updated_at": "2026-11-14T10:45:53+00:00"
+  },
+  "events": [
+    {
+      "at": "2026-11-14T16:14:48+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c001",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:14:49+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c001",
+      "status": 200,
+      "body": {
+        "id": "c001",
+        "full_name": "Aarav Mehta",
+        "email": null,
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": null,
+        "preferred_location": "Mumbai",
+        "available_from": "2027-01-04",
+        "internship_duration_months": 6,
+        "linkedin_url": "https://www.linkedin.com/in/aarav-mehta-example",
+        "github_url": null,
+        "skills": [
+          "Python",
+          "SQL"
+        ],
+        "phone": "+915900909289",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 1,
+        "updated_at": "2026-11-14T10:43:49+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T16:14:49+05:30",
+      "kind": "diagnosis",
+      "missing": [
+        "email",
+        "cgpa"
+      ],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": null
+    },
+    {
+      "at": "2026-11-14T16:15:00+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": []
+    },
+    {
+      "at": "2026-11-14T16:15:00+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Aarav Mehta | identity: unknown | today: Saturday 2026-11-14 16:14 IST\nSaved this chat: nothing yet\nStill needed: email (email address), cgpa (CGPA (10-point scale))\nRefused: none\nTurn 1 of 30\nAlready on file (don't ask again): full_name=Aarav Mehta, college=NMIMS MPSTME, Mumbai, degree=B.Tech, branch=Computer Engineering, graduation_year=2027, preferred_location=Mumbai, available_from=2027-01-04, internship_duration_months=6\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Aarav Mehta?\nCandidate: hello yes\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [],
+        "sentiment": "ok",
+        "reply": "Great, thanks Aarav! Could you please share your email address and your CGPA out of 10 to complete your application?"
+      },
+      "seconds": 7.71,
+      "usage": {
+        "prompt": 2738,
+        "output": 58,
+        "thinking": null
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T16:15:32+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "cgpa",
+          "value": "3.9",
+          "evidence": "cgpa 3,9",
+          "candidate_confirmed": false
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T16:15:32+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "prompt": "STATE CARD\nCandidate: Aarav Mehta | identity: confirmed | today: Saturday 2026-11-14 16:15 IST\nSaved this chat: nothing yet\nStill needed: email (email address), cgpa (CGPA (10-point scale))\nRefused: none\nTurn 2 of 30\nAlready on file (don't ask again): full_name=Aarav Mehta, college=NMIMS MPSTME, Mumbai, degree=B.Tech, branch=Computer Engineering, graduation_year=2027, preferred_location=Mumbai, available_from=2027-01-04, internship_duration_months=6\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Aarav Mehta?\nCandidate: hello yes\nYou: Great, thanks Aarav! Could you please share your email address and your CGPA out of 10 to complete your application?\nCandidate: yesyes cgpa 3,9 arav @ hotmail\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "cgpa",
+            "value": "3.9",
+            "evidence": "cgpa 3,9",
+            "candidate_confirmed": false
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Just to make sure I got it right: is your CGPA 3.9 out of 10, and is your email address arav@hotmail.com?"
+      },
+      "seconds": 2.07,
+      "usage": {
+        "prompt": 2784,
+        "output": 123,
+        "thinking": null
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T16:15:33+05:30",
+      "kind": "llm_error",
+      "purpose": "repair_reply",
+      "model": "gemini-3.5-flash",
+      "key": "primary",
+      "code": 429,
+      "error": "429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Q"
+    },
+    {
+      "at": "2026-11-14T16:15:34+05:30",
+      "kind": "llm_call",
+      "purpose": "repair_reply",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Aarav Mehta | identity: confirmed | today: Saturday 2026-11-14 16:15 IST\nSaved this chat: nothing yet\nStill needed: email (email address), cgpa (CGPA (10-point scale))\nRefused: none\nTurn 2 of 30\nAlready on file (don't ask again): full_name=Aarav Mehta, college=NMIMS MPSTME, Mumbai, degree=B.Tech, branch=Computer Engineering, graduation_year=2027, preferred_location=Mumbai, available_from=2027-01-04, internship_duration_months=6\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Aarav Mehta?\nCandidate: hello yes\nYou: Great, thanks Aarav! Could you please share your email address and your CGPA out of 10 to complete your application?\nCandidate: yesyes cgpa 3,9 arav @ hotmail\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.\n\nYou drafted this reply: 'Just to make sure I got it right: is your CGPA 3.9 out of 10, and is your email address arav@hotmail.com?'\nYour actions were executed with these results:\nsave cgpa='3.9': REJECTED. CONFIRM: the scale wasn't stated. Ask if 3.9 is on the 10-point scale (not 4-point); save it with candidate_confirmed=true once they say yes.\nSome values were NOT saved. Rewrite the reply so it is accurate: don't thank them for or confirm values that were rejected; kindly explain what's needed and ask again. Keep everything else in your draft that is still true. Respond with JSON only.",
+      "response": {
+        "reply": "Thanks! Just to confirm, is your email address arav@hotmail.com? Also, is your CGPA of 3.9 on a 10-point scale?"
+      },
+      "seconds": 1.75,
+      "usage": {
+        "prompt": 2947,
+        "output": 46,
+        "thinking": null
+      }
+    },
+    {
+      "at": "2026-11-14T16:15:48+05:30",
+      "kind": "actions",
+      "identity": "confirmed",
+      "sentiment": "ok",
+      "actions": [
+        {
+          "type": "save",
+          "field": "email",
+          "value": "arav@hotmail.com",
+          "evidence": "arav @ hotmail",
+          "candidate_confirmed": true
+        },
+        {
+          "type": "save",
+          "field": "cgpa",
+          "value": "3.9",
+          "evidence": "cgpa 3,9",
+          "candidate_confirmed": true
+        }
+      ]
+    },
+    {
+      "at": "2026-11-14T16:15:48+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c001",
+      "headers": {
+        "If-Match": "\"1\"",
+        "Idempotency-Key": "76b9abbf8f003cbb88d872aeb26b3520",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "arav@hotmail.com",
+        "cgpa": 3.9
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:15:49+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c001",
+      "status": 200,
+      "body": {
+        "id": "c001",
+        "full_name": "Aarav Mehta",
+        "email": "arav@hotmail.com",
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Mumbai",
+        "available_from": "2027-01-04",
+        "internship_duration_months": 6,
+        "linkedin_url": "https://www.linkedin.com/in/aarav-mehta-example",
+        "github_url": null,
+        "skills": [
+          "Python",
+          "SQL"
+        ],
+        "phone": "+915900909289",
+        "collection_status": "pending",
+        "attempt_count": 0,
+        "last_contacted_at": null,
+        "notes": null,
+        "version": 2,
+        "updated_at": "2026-11-14T10:45:49+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T16:15:49+05:30",
+      "kind": "llm_call",
+      "purpose": "turn",
+      "model": "gemini-3.5-flash",
+      "key": "fallback",
+      "prompt": "STATE CARD\nCandidate: Aarav Mehta | identity: confirmed | today: Saturday 2026-11-14 16:15 IST\nSaved this chat: nothing yet\nStill needed: email (email address), cgpa (CGPA (10-point scale))\nRefused: none\nTurn 3 of 30\nAlready on file (don't ask again): full_name=Aarav Mehta, college=NMIMS MPSTME, Mumbai, degree=B.Tech, branch=Computer Engineering, graduation_year=2027, preferred_location=Mumbai, available_from=2027-01-04, internship_duration_months=6\n\nCONVERSATION (most recent last)\nYou: Hi! This is the ACME Corp internship team, following up on your internship application. Am I speaking with Aarav Mehta?\nCandidate: hello yes\nYou: Great, thanks Aarav! Could you please share your email address and your CGPA out of 10 to complete your application?\nCandidate: yesyes cgpa 3,9 arav @ hotmail\nYou: Thanks! Just to confirm, is your email address arav@hotmail.com? Also, is your CGPA of 3.9 on a 10-point scale?\nCandidate: yes it is yes it is\n\nRESULTS OF YOUR ACTIONS LAST TURN\nsave cgpa='3.9': REJECTED. CONFIRM: the scale wasn't stated. Ask if 3.9 is on the 10-point scale (not 4-point); save it with candidate_confirmed=true once they say yes.\n\nPRE-CHECKS ON THE LATEST CANDIDATE MESSAGE (from code)\nnone\n\nDecide your actions and write your reply. Respond with JSON only.",
+      "response": {
+        "identity": "confirmed",
+        "actions": [
+          {
+            "type": "save",
+            "field": "email",
+            "value": "arav@hotmail.com",
+            "evidence": "arav @ hotmail",
+            "candidate_confirmed": true
+          },
+          {
+            "type": "save",
+            "field": "cgpa",
+            "value": "3.9",
+            "evidence": "cgpa 3,9",
+            "candidate_confirmed": true
+          }
+        ],
+        "sentiment": "ok",
+        "reply": "Thank you for confirming! I've updated your email and CGPA."
+      },
+      "seconds": 3.52,
+      "usage": {
+        "prompt": 2898,
+        "output": 158,
+        "thinking": null
+      },
+      "streamed": true
+    },
+    {
+      "at": "2026-11-14T16:15:53+05:30",
+      "kind": "api_request",
+      "method": "PATCH",
+      "path": "/v1/candidates/c001",
+      "headers": {
+        "If-Match": "\"2\"",
+        "Idempotency-Key": "703e69acdc66d762117c909f5703b754",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "collection_status": "completed",
+        "last_contacted_at": "2026-11-14T16:15:53+05:30",
+        "attempt_count": 1,
+        "notes": "[2026-11-14 16:15 IST] Agent chat → completed. Collected: email=arav@hotmail.com, cgpa=3.9. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}"
+      },
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:15:54+05:30",
+      "kind": "api_response",
+      "method": "PATCH",
+      "path": "/v1/candidates/c001",
+      "status": 200,
+      "body": {
+        "id": "c001",
+        "full_name": "Aarav Mehta",
+        "email": "arav@hotmail.com",
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Mumbai",
+        "available_from": "2027-01-04",
+        "internship_duration_months": 6,
+        "linkedin_url": "https://www.linkedin.com/in/aarav-mehta-example",
+        "github_url": null,
+        "skills": [
+          "Python",
+          "SQL"
+        ],
+        "phone": "+915900909289",
+        "collection_status": "completed",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T16:15:53+05:30",
+        "notes": "[2026-11-14 16:15 IST] Agent chat → completed. Collected: email=arav@hotmail.com, cgpa=3.9. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}",
+        "version": 3,
+        "updated_at": "2026-11-14T10:45:53+00:00"
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "candidate_id": "c001",
+  "started_at": "2026-11-14T16:16:00+05:30",
+  "status": "completed",
+  "chat": false,
+  "llm_calls": 0,
+  "events": [
+    {
+      "at": "2026-11-14T16:16:00+05:30",
+      "kind": "api_request",
+      "method": "GET",
+      "path": "/v1/candidates/c001",
+      "headers": null,
+      "body": null,
+      "attempt": 1
+    },
+    {
+      "at": "2026-11-14T16:16:01+05:30",
+      "kind": "api_response",
+      "method": "GET",
+      "path": "/v1/candidates/c001",
+      "status": 200,
+      "body": {
+        "id": "c001",
+        "full_name": "Aarav Mehta",
+        "email": "arav@hotmail.com",
+        "college": "NMIMS MPSTME, Mumbai",
+        "degree": "B.Tech",
+        "branch": "Computer Engineering",
+        "graduation_year": 2027,
+        "cgpa": 3.9,
+        "preferred_location": "Mumbai",
+        "available_from": "2027-01-04",
+        "internship_duration_months": 6,
+        "linkedin_url": "https://www.linkedin.com/in/aarav-mehta-example",
+        "github_url": null,
+        "skills": [
+          "Python",
+          "SQL"
+        ],
+        "phone": "+915900909289",
+        "collection_status": "completed",
+        "attempt_count": 1,
+        "last_contacted_at": "2026-11-14T16:15:53+05:30",
+        "notes": "[2026-11-14 16:15 IST] Agent chat → completed. Collected: email=arav@hotmail.com, cgpa=3.9. End reason: candidate confirmed the summary.\n---agent-state v1---\n{\"remaining\":[],\"refused\":[],\"unresolved\":[],\"callback\":null,\"status\":\"completed\"}",
+        "version": 3,
+        "updated_at": "2026-11-14T10:45:53+00:00"
+      }
+    },
+    {
+      "at": "2026-11-14T16:16:01+05:30",
+      "kind": "diagnosis",
+      "missing": [],
+      "invalid": [],
+      "optional_invalid": [],
+      "prior_state": {
+        "remaining": [],
+        "refused": [],
+        "unresolved": [],
+        "callback": null,
+        "status": "completed"
+      }
+    }
+  ]
+}
