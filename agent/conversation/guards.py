@@ -137,17 +137,22 @@ def check_outgoing(reply: str) -> tuple[str, list[str]]:
 
 # ---------------------------------------------------------------- plain confirmation
 
-_YES_WORDS = {"yes", "yeah", "yep", "yup", "ya", "correct", "right", "perfect", "ok", "okay", "sure",
-              "haan", "han", "ha", "ji", "absolutely", "exactly", "done", "fine", "great", "thanks",
-              "thank", "you", "all", "good", "looks", "everything", "is", "it", "that", "s", "👍"}
+_STRONG_YES = {"yes", "yeah", "yea", "yeh", "yep", "yup", "ya", "yaa", "yas", "yess", "yesss", "ye",
+               "correct", "right", "perfect", "ok", "okay", "okk", "okie", "k", "kk", "sure", "haan", "han",
+               "haa", "haanji", "hanji", "ji", "bilkul", "sahi", "theek", "thik", "absolutely", "exactly",
+               "good", "affirmative", "confirmed", "confirm", "accurate", "alright", "allright", "fine",
+               "👍", "✅", "👌"}
+_YES_WORDS = _STRONG_YES | {"done", "great", "thanks", "thank", "you", "thx", "ty", "all", "looks", "look",
+                            "everything", "is", "it", "that", "s", "its", "thats", "hai", "he", "h", "sab",
+                            "ekdum", "bhai", "sir", "mam", "maam", "totally", "true", "spot", "on", "very",
+                            "much", "so", "dhanyavad", "shukriya", "cool", "nice", "awesome", "seems", "to",
+                            "me", "be", "am", "are", "details", "info", "every", "thing", "ha"}
 
 
 def is_plain_yes(message: str) -> bool:
     """'yes', 'yep all good', 'haan ji', '👍' → True. Anything with new content → False (goes to the LLM)."""
-    words = re.findall(r"[a-z]+|👍", message.lower())
-    return bool(words) and all(w in _YES_WORDS for w in words) and \
-        any(w in {"yes", "yeah", "yep", "yup", "ya", "correct", "right", "perfect", "ok", "okay", "sure",
-                  "haan", "han", "ji", "absolutely", "exactly", "good", "👍"} for w in words)
+    words = re.findall(r"[a-z]+|👍|✅|👌", message.lower())
+    return bool(words) and all(w in _YES_WORDS for w in words) and any(w in _STRONG_YES for w in words)
 
 
 def known_values(record: dict, saved: dict) -> dict:

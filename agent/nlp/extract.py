@@ -25,7 +25,9 @@ DATE_WORDS = re.compile(
     re.I,
 )
 # Alias keys too common in ordinary sentences to be a useful hint on their own.
-GENERIC_WORDS = {"any", "either", "online", "other", "flexible", "fromhome", "be"}
+GENERIC_WORDS = {"any", "either", "online", "other", "others", "flexible", "fromhome", "be", "home",
+                 "open", "both", "anyone", "whatever", "wherever", "virtual", "bang", "mum", "bom",
+                 "auto", "none", "bs", "chalega", "remotely", "athome"}
 
 
 def _verdict(field: str, raw: str) -> str:

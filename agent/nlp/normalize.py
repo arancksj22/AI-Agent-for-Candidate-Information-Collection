@@ -109,7 +109,13 @@ def normalize_college(raw: Any) -> Result:
 
 
 def normalize_branch(raw: Any) -> Result:
-    return _length_checked(raw, 2, 100, "Branch")
+    res = _length_checked(raw, 2, 100, "Branch")
+    if res.ok:
+        key = _key(re.sub(r"\b(engineering|engg|eng|branch|dept|department)\b\.?", "", str(res.value), flags=re.I)) \
+            if _key(res.value) not in schema.BRANCH_ALIASES else _key(res.value)
+        if key in schema.BRANCH_ALIASES:
+            return ok(schema.BRANCH_ALIASES[key])      # exact short forms only: no fuzzy guessing
+    return res
 
 
 # ---------------------------------------------------------------- enums
